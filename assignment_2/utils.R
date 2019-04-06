@@ -1,20 +1,13 @@
 ## util functions for the application
 
-
-## getting total player statistics by season
-get_players_by_season_total <- function(season) {
-  player_stat <- per_player_agg(filter_per_player(season = season))
-  colnames(player_stat)[2] <- "Player"
-  colnames(player_stat)[4] <- "Team"
-  colnames(player_stat)[5] <- "Age"
-  
-  player_stat <- na.omit(player_stat)
-  
-  player_stat
+## get the seasons
+## in nba stat there was only data starting from 1996 that was available in the same format
+get_seasons <- function(start = 1996) {
+  seasons <- start:2018
   
 }
 
-## get team data by season
+## get teams data by season
 get_teams_by_season <- function(season) {
   team_stat <- team_game_logs(league = "nba", season =  season)
   
@@ -32,6 +25,7 @@ get_team_data <- function(df, team) {
   one_team
 }
 
+
 ## get team names
 get_team_list <- function(df) {
   team_df <- df %>%
@@ -43,10 +37,17 @@ get_team_list <- function(df) {
   team_df
 }
 
-## get the seasons
-## in nba stat there was only data starting from 1996 that was available in the same format
-get_seasons <- function(start = 1996) {
-  seasons <- start:2018
+
+## getting total player statistics by season
+get_players_by_season_total <- function(season) {
+  player_stat <- per_player_agg(filter_per_player(season = season))
+  colnames(player_stat)[2] <- "Player"
+  colnames(player_stat)[4] <- "Team"
+  colnames(player_stat)[5] <- "Age"
+  
+  player_stat <- na.omit(player_stat)
+  
+  player_stat
   
 }
 

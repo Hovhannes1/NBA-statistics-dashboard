@@ -1,6 +1,5 @@
 #
-# This is the user-interface definition of a Shiny web application. You can
-# run the application by clicking 'Run App' above.
+# This is the user-interface definition of a Shiny web application.
 #
 
 
@@ -36,9 +35,19 @@ sidebar <- dashboardSidebar(sidebarMenu(
     badgeColor = "purple"
   ),
   menuItem(
-    "Information",
-    tabName = "contact",
-    icon = icon("envelope-o")
+    "Team Analysis",
+    tabName = "team_stat",
+    icon = icon("bar-chart")
+  ),
+  menuItem(
+    "Player Analysis",
+    tabName = "player_stat",
+    icon = icon("bar-chart")
+  ),
+  menuItem(
+    "Play by Play Analysis",
+    tabName = "playbyplay_stat",
+    icon = icon("bar-chart")
   ),
   menuItem(
     "NBA Official Satistics",
@@ -65,30 +74,20 @@ body <- dashboardBody(
                   title = "Controls",
                   status = "danger",
                   solidHeader = TRUE,
-                  width = 4,
-                  height = 330,
                   selectInput(
                     inputId = "seasonInput2",
                     "Choose a season:",
                     choices = get_seasons(),
                     selected = 2018
                   ),
-                  selectInput(
-                    inputId = "teamInput1",
-                    "Choose a team:",
-                    choices = get_team_list(get_teams_by_season()),
-                    selected = "Chicago Bulls"
-                  ),
-                  uiOutput("team_ptsOutput")
+                  uiOutput("teamOutput1"),
+                  uiOutput("teamSeason_output")
                 ),
                 
                 box(
                   title = "Team Performance",
                   width = 12,
-                  
-                  tabPanel(
-                    div(style = 'overflow-x: scroll', plotlyOutput("general_teamPlot"))
-                  )
+                  div(style = 'overflow-x: scroll', plotlyOutput("general_teamPlot"))
                 )
               )
             )
@@ -146,13 +145,8 @@ body <- dashboardBody(
               fluidRow(
                 box(
                   title = "Stats",
-                  # The id lets us use input$tabset1 on the server to find the current tab
-                  id = "tabsetInput",
                   width = 12,
-                  
-                  tabPanel("Totals",
-                           div(style = 'overflow-x: scroll', plotlyOutput("comparePlot1")))
-                )
+                  div(style = 'overflow-x: scroll', plotlyOutput("comparePlot1")))
               )
             )
     ),
@@ -164,23 +158,8 @@ body <- dashboardBody(
               "All the data is taken from",
               a("NBA.com", href = "https://stats.nba.com/")
             )
-    ),
-    
-    tabItem(
-      tabName = "contact",
-      h4("Data Science Homework 5 by Mark Hovsepyan"),
-      h4("Please feel free to share your comments and/or report any issues."),
-      br(),
-      h4(
-        "Mark Hovsepyan",
-        br(),
-        a("Email", href = "mailto:markhovsepyan98@gmail.com")
-      )
     )
   )
 )
 
 ui <- dashboardPage(header, sidebar, body, skin = 'blue')
-
-
-library(statsnbaR)

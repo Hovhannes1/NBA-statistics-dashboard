@@ -1,22 +1,35 @@
 #
-# This is the server logic of a Shiny web application. You can run the 
-# application by clicking 'Run App' above.
+# This is the server logic of a Shiny web application.
 #
 
 
 server <- function(input, output, session) {
   
+  ## general team data
+  
+  team_season <- reactive({
+    get_teams_by_season(as.numeric(input$seasonInput2))
+  })
+  
+  one_team_data <- eventReactive(input$teamSeason_input, {
+    get_team_data(team_season(), input$teamInput1)
+    
+  })
+  
+  
+  ## player comparison data 
+  
   player_totals <- reactive({
     get_players_by_season_total(as.numeric(input$seasonInput1))
   })
   
-  main_totals_1 <- eventReactive(input$compareInput, {
-    get_player_table(input$player1Input, player_totals())
+  player_vs_player <- eventReactive(input$compareInput, {
+    p1 <- get_player_table(input$player1Input, player_totals())
+    p2 <- get_player_table(input$player2Input, player_totals())
+    
+    rbind(p1, p2)
   })
   
-  main_totals_2 <- eventReactive(input$compareInput, {
-    get_player_table(input$player2Input, player_totals())
-  })
   
   img1 <- eventReactive(input$compareInput, {
     get_pic_link(input$player1Input)
@@ -28,35 +41,49 @@ server <- function(input, output, session) {
   })
   
   info1 <- eventReactive(input$compareInput, {
-    age1 <- get_player_age(main_totals_1())
-    team1 <- get_player_team(main_totals_1())
+    pvsp <- player_vs_player()
+    age1 <- get_player_age(pvsp[1, ])
+    team1 <- get_player_team(pvsp[1, ])
     cbind(team1, age1, row.names = NULL)
   })
   
   info2 <- eventReactive(input$compareInput, {
-    age2 <- get_player_age(main_totals_2())
-    team2 <- get_player_team(main_totals_2())
+    pvsp <- player_vs_player()
+    age2 <- get_player_age(pvsp[2, ])
+    team2 <- get_player_team(pvsp[2, ])
     cbind(team2, age2, row.names = NULL)
   })
   
-  ## team data
-  team_season <- reactive({
-    get_teams_by_season(as.numeric(input$seasonInput2))
-  })
-  
-  one_team_data <- eventReactive(input$teamInput1, {
-    get_team_data(team_season(), input$team_season1)
-    
-  })
   
   
-  ## Outputs
+  ### Outputs ###
+  
+  ## general tab
   
   output$teamOutput1 <- renderUI({
     selectInput(inputId = "teamInput1",
                 "Select  a team:",
-                choices = get_team_list(get_teams_by_season()))
+                choices = get_team_list(team_season()))
   })
+  
+  
+  output$teamSeason_output <- renderUI({
+    HTML(
+      '<center><button id="teamSeason_input" class="btn btn-default action-button">Show</button></center>'
+    )
+  })
+  
+  output$general_teamPlot <- renderPlotly({
+    one_team_data <- one_team_data()
+    
+    p <- ggplot(one_team_data, aes(x = game_date, y = pts, fill = win)) +
+      geom_col()
+    
+    ggplotly(p)
+  })
+  
+  
+  ## compare tab
   
   output$player1Output <- renderUI({
     selectInput(inputId = "player1Input",
@@ -73,12 +100,6 @@ server <- function(input, output, session) {
   output$compareOutput <- renderUI({
     HTML(
       '<center><button id="compareInput" class="btn btn-default action-button">Compare</button></center>'
-    )
-  })
-  
-  output$team_ptsOutput <- renderUI({
-    HTML(
-      '<center><button id="teamInput1" class="btn btn-default action-button">Show</button></center>'
     )
   })
   
@@ -106,21 +127,13 @@ server <- function(input, output, session) {
     info2()
   })
   
+  
   output$comparePlot1 <- renderPlotly({
-    compare_data <- rbind(main_totals_1(), main_totals_2())
+    compare_data <- player_vs_player()
     compare_data.long <- melt(compare_data, id.vars = "Player")
     
     p <- ggplot(compare_data.long, aes(x = variable, y = value, fill = Player)) +
       geom_bar(stat = "identity", position = "dodge")
-    
-    ggplotly(p)
-  })
-  
-  output$general_teamPlot <- renderPlotly({
-    one_team_data <- one_team_data()
-    
-    p <- ggplot(one_team_data, aes(x = game_date, y = pts, fill = win)) +
-      geom_bar()
     
     ggplotly(p)
   })
