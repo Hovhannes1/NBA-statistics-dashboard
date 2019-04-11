@@ -1,15 +1,6 @@
 ## loading the shinydashboard and other packages
-## make sure to have all installed and loaded
-library(shiny)
-library(shinydashboard)
-library(ggplot2)
-library(plotly)
-library(dplyr)
-library(httr)
-library(devtools)
-library(stringr)
-library(rvest)
-library(reshape2)
+
+source('install_load_packages.R')
 
 
 ## the following is an API interface for stats.NBA.com

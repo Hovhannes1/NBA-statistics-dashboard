@@ -37,10 +37,10 @@ get_team_list <- function(df) {
   team_df
 }
 
-
 ## getting total player statistics by season
 get_players_by_season_total <- function(season) {
-  player_stat <- per_player_agg(filter_per_player(season = season))
+  filter <- filter_per_player(league = "nba", season = season)
+  player_stat <- per_player_agg(filter)
   colnames(player_stat)[2] <- "Player"
   colnames(player_stat)[4] <- "Team"
   colnames(player_stat)[5] <- "Age"
@@ -79,11 +79,6 @@ get_player_age <- function(player_table_df) {
 ## get player team
 get_player_team <- function(player_table_df) {
   player_table_df["Team"]
-}
-
-## clear and get the stats we need
-get_player_stats <- function(player_table_df) {
-  player_table_df[1,-c(1, 2, 3)]
 }
 
 
