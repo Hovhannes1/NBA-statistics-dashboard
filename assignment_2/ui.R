@@ -12,6 +12,11 @@ header <- dashboardHeader(
                 message = "Welcome! Let's start!")
   ),
   dropdownMenu(
+    type = "tasks",
+    messageItem(from = "Hovhannes Stepanyan",
+                message = "Let's win together")
+  ),
+  dropdownMenu(
     type = "notifications",
     notificationItem(
       text = "Please read instructions to start",
@@ -37,16 +42,21 @@ sidebar <- dashboardSidebar(sidebarMenu(
   menuItem(
     "Team Analysis",
     tabName = "team_stat",
-    icon = icon("bar-chart")
+    icon = icon("line-chart")
   ),
   menuItem(
     "Player Analysis",
     tabName = "player_stat",
-    icon = icon("bar-chart")
+    icon = icon("pie-chart")
   ),
   menuItem(
     "Play by Play Analysis",
     tabName = "playbyplay_stat",
+    icon = icon("bar-chart")
+  ),
+  menuItem(
+    "Explore Data",
+    tabName = "raw_data",
     icon = icon("bar-chart")
   ),
   menuItem(
@@ -57,32 +67,51 @@ sidebar <- dashboardSidebar(sidebarMenu(
 ))
 
 
-
 body <- dashboardBody(
   tabItems(
     tabItem(tabName = "general",
             fluidPage(
               fluidRow(
                 box(
+                  title = "Team Performance",
+                  width = 6,
+                  div(style = 'overflow-x: scroll', plotlyOutput("win_percentage"))
+                ),
+                box()
+              ),
+              
+              fluidRow(
+                box(),
+                box()
+              )
+            )
+    ),
+    
+    tabItem(tabName = "team_stat",
+            fluidPage(
+              fluidRow(
+                box(
                   h2("General Team Performance"),
-                  width = 12
+                  width = 12,
+                  title = "Controls",
+                  status = "danger",
+                  solidHeader = TRUE,
+                  box (
+                    width = 4,
+                    selectInput(
+                      inputId = "seasonInput2",
+                      "Choose a season:",
+                      choices = get_seasons(),
+                      selected = 2018
+                    ),
+                    uiOutput("teamOutput1"),
+                    uiOutput("teamSeason_output")
+                  )
                 )
               ),
               
               fluidRow(
-                box(
-                  title = "Controls",
-                  status = "danger",
-                  solidHeader = TRUE,
-                  selectInput(
-                    inputId = "seasonInput2",
-                    "Choose a season:",
-                    choices = get_seasons(),
-                    selected = 2018
-                  ),
-                  uiOutput("teamOutput1"),
-                  uiOutput("teamSeason_output")
-                ),
+                
                 
                 box(
                   title = "Team Performance",
@@ -151,8 +180,26 @@ body <- dashboardBody(
             )
     ),
     
-    
-    
+    tabItem(tabName = "raw_data",
+        fluidPage(
+              fluidRow(
+                box (
+                  width = 4,
+                  selectInput(
+                    inputId = "seasonInput3",
+                    "Choose a season:",
+                    choices = get_seasons(),
+                    selected = 2018
+                  )
+                ),
+              box(
+                dataTableOutput("data_table1"),
+                width = 12
+              )
+            )
+          )
+    ), 
+
     tabItem(tabName = "sources",
             h4(
               "All the data is taken from",

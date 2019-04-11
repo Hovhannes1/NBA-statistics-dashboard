@@ -11,6 +11,10 @@ server <- function(input, output, session) {
     get_teams_by_season(as.numeric(input$seasonInput2))
   })
   
+  team_season_data <- reactive({
+    get_teams_by_season(as.numeric(input$seasonInput3))
+  })
+  
   one_team_data <- eventReactive(input$teamSeason_input, {
     get_team_data(team_season(), input$teamInput1)
     
@@ -60,6 +64,18 @@ server <- function(input, output, session) {
   
   ## general tab
   
+  output$win_percentage <- renderPlotly({
+    team_season <- team_season()
+    team_win <- team_season
+    
+    p <- ggplot(one_team_data, aes(x = game_date, y = pts)) +
+      geom_line(colour = 'rgba(54, 162, 235, 0.5)') + geom_point(aes(fill = one_team_data$win, color = one_team_data$win))
+    
+    ggplotly(p)
+  })
+  
+  ## team tab
+  
   output$teamOutput1 <- renderUI({
     selectInput(inputId = "teamInput1",
                 "Select  a team:",
@@ -75,9 +91,10 @@ server <- function(input, output, session) {
   
   output$general_teamPlot <- renderPlotly({
     one_team_data <- one_team_data()
+    one_team_data$win <- ifelse(one_team_data$win, "Win", "Lose")
     
-    p <- ggplot(one_team_data, aes(x = game_date, y = pts, fill = win)) +
-      geom_col()
+    p <- ggplot(one_team_data, aes(x = game_date, y = pts)) +
+      geom_line(colour = 'rgba(54, 162, 235, 0.5)') + geom_point(aes(fill = one_team_data$win, color = one_team_data$win))
     
     ggplotly(p)
   })
@@ -151,5 +168,10 @@ server <- function(input, output, session) {
     ggplotly(p)
   })
   
+  ## data table
+  output$data_table1 <- DT::renderDataTable({
+    DT::datatable(team_season_data(),
+                  options = list(lengthMenu = c(5, 30, 50), pageLength = 5))
+  })
   
 }

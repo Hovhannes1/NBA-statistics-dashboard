@@ -5,6 +5,7 @@ required_packages = c(
   "ggplot2",
   "plotly",
   "dplyr",
+  "DT",
   "httr",
   "devtools",
   "stringr",
