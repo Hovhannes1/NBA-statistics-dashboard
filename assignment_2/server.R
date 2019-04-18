@@ -169,24 +169,24 @@ server <- function(input, output, session) {
   
   
   output$comparePlot1 <- renderPlotly({
-    compare_data <- player_vs_player()[, -c(2, 3)]
+    
+    compare_data <- player_vs_player()[c(1, 8:21)]
+    
     compare_data.long <- melt(compare_data, id.vars = "Player")
     
     player_list <- c(compare_data[1, 1], compare_data[2, 1])
     
     
-    #p <- ggplot(compare_data.long, aes(x = variable, fill = Player)) + 
-     # geom_bar(subset(compare_data.long, Player == player_list[1])) + 
-      #geom_bar(subset(compare_data.long, Player == player_list[2]), aes(y = value*(-1))) +
-      #coord_flip()
-    
     p <- ggplot(data = compare_data.long, aes(x = variable, y = value, fill = Player)) +
-      geom_bar(data = subset(compare_data.long, Player == player_list[1]),
-               stat = "identity") +
-      geom_bar(data = subset(compare_data.long, Player == player_list[2]),
+      geom_bar(data = subset(compare_data.long, Player == player_list[1]), 
                stat = "identity",
-               position = "identity") +
-      coord_flip()
+               mapping = aes(y = -value),
+               position = "identity") + 
+      geom_bar(data = subset(compare_data.long, Player == player_list[2]), 
+               stat = "identity") +
+      scale_y_continuous() +
+      coord_flip() +
+      theme_bw()
     
     ggplotly(p)
   })

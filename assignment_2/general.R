@@ -23,14 +23,11 @@ ggplot(teams, aes(x = reorder(Var1, ((win$cnt / Freq) * 100)), y = (win$cnt / Fr
   geom_text(aes(x = Var1, y = (win$cnt / Freq) * 100 + 3 , label = round((win$cnt / Freq) * 100 , 1)))
 
 
-
-teams <- a %>%
-  group_by(team_abbr) %>%
-  filter(win == T) %>%
-  select(win) %>%
-  summarise(n = n())
-
-teams$freq <- a %>% 
-  group_by(team_abbr) %>%
-  select(win) %>%
-  summarise(n = n())
+player <- get_player_table("Lebron James", players)
+players_new <- player[c(1, 8:21)]
+  
+  
+  
+  
+  
+  
