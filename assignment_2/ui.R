@@ -77,7 +77,11 @@ body <- dashboardBody(
                   width = 6,
                   div(style = 'overflow-x: scroll', plotlyOutput("win_percentage"))
                 ),
-                box()
+                box(
+                  title = "Team",
+                  width = 6,
+                  div(style = 'overflow-x: scroll', plotlyOutput(""))
+                )
               ),
               
               fluidRow(

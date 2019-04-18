@@ -66,13 +66,36 @@ server <- function(input, output, session) {
   
   output$win_percentage <- renderPlotly({
     team_season <- team_season()
-    team_win <- team_season
+    team_win <- as.data.frame(table(team_season$team_abbr))
     
-    p <- ggplot(one_team_data, aes(x = game_date, y = pts)) +
-      geom_line(colour = 'rgba(54, 162, 235, 0.5)') + geom_point(aes(fill = one_team_data$win, color = one_team_data$win))
+    team_win$win <- team_season %>%
+      group_by(team_abbr) %>%
+      filter(win == T) %>%
+      select(win) %>%
+      summarise(cnt = n())
+    
+    perc <- (team_win$win$cnt / team_win$Freq) * 100
+    
+    p <- ggplot(team_win, aes(x = reorder(Var1, perc), y = perc)) +
+      geom_bar(stat = "identity", aes(fill= Var1)) +
+      theme(axis.line = element_blank(),
+            axis.text.x = element_blank(),
+            axis.ticks = element_blank(),
+            legend.position = "none",
+            panel.grid.major = element_blank(),
+            panel.grid.minor = element_blank(),
+            panel.border = element_blank(),
+            panel.background = element_blank()) +
+      xlab("Teams") +
+      ylab("Win Percentage") +
+      scale_colour_brewer() +  
+      coord_flip() +
+      geom_text(size = 3, aes(x = Var1, y = perc + 4 , label = round(perc , 1)))
     
     ggplotly(p)
   })
+  
+  
   
   ## team tab
   
