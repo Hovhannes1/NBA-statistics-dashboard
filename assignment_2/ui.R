@@ -91,43 +91,7 @@ body <- dashboardBody(
             )
     ),
     
-    tabItem(tabName = "team_stat",
-            fluidPage(
-              fluidRow(
-                box(
-                  h2("General Team Performance"),
-                  width = 12,
-                  title = "Controls",
-                  status = "danger",
-                  solidHeader = TRUE,
-                  box (
-                    width = 4,
-                    selectInput(
-                      inputId = "seasonInput2",
-                      "Choose a season:",
-                      choices = get_seasons(),
-                      selected = 2018
-                    ),
-                    uiOutput("teamOutput1"),
-                    uiOutput("teamSeason_output")
-                  )
-                )
-              ),
-              
-              fluidRow(
-                
-                
-                box(
-                  title = "Team Performance",
-                  width = 12,
-                  div(style = 'overflow-x: scroll', plotlyOutput("general_teamPlot"))
-                )
-              )
-            )
-    ),
-    
-    
-    # Second tab content
+    # Comparison tab content
     tabItem(tabName = "compare",
             fluidPage(
               fluidRow(
@@ -181,6 +145,49 @@ body <- dashboardBody(
                   width = 12,
                   div(style = 'overflow-x: scroll', plotlyOutput("comparePlot1")))
               )
+            )
+    ),
+    
+    ## Team tab content
+    tabItem(tabName = "team_stat",
+            fluidPage(
+              fluidRow(
+                box(
+                  h2("General Team Performance"),
+                  width = 12,
+                  title = "Controls",
+                  status = "danger",
+                  solidHeader = TRUE,
+                  box (
+                    width = 4,
+                    selectInput(
+                      inputId = "seasonInput2",
+                      "Choose a season:",
+                      choices = get_seasons(),
+                      selected = 2018
+                    ),
+                    uiOutput("teamOutput1"),
+                    uiOutput("teamSeason_output")
+                  )
+                )
+              ),
+              
+              fluidRow(
+                
+                
+                box(
+                  title = "Team Performance",
+                  width = 12,
+                  div(style = 'overflow-x: scroll', plotlyOutput("general_teamPlot"))
+                )
+              )
+            )
+    ),
+    
+    # Player tab content
+    tabItem(tabName = "compare",
+            fluidPage(
+              uiOutput("BallR")
             )
     ),
     

@@ -96,33 +96,6 @@ server <- function(input, output, session) {
   })
   
   
-  
-  ## team tab
-  
-  output$teamOutput1 <- renderUI({
-    selectInput(inputId = "teamInput1",
-                "Select  a team:",
-                choices = get_team_list(team_season()))
-  })
-  
-  
-  output$teamSeason_output <- renderUI({
-    HTML(
-      '<center><button id="teamSeason_input" class="btn btn-default action-button">Show</button></center>'
-    )
-  })
-  
-  output$general_teamPlot <- renderPlotly({
-    one_team_data <- one_team_data()
-    one_team_data$win <- ifelse(one_team_data$win, "Win", "Lose")
-    
-    p <- ggplot(one_team_data, aes(x = game_date, y = pts)) +
-      geom_line(colour = 'rgba(54, 162, 235, 0.5)') + geom_point(aes(fill = one_team_data$win, color = one_team_data$win))
-    
-    ggplotly(p)
-  })
-  
-  
   ## compare tab
   
   output$player1Output <- renderUI({
@@ -191,10 +164,42 @@ server <- function(input, output, session) {
     ggplotly(p)
   })
   
-  ## data table
+  
+  ## team tab
+  
+  output$teamOutput1 <- renderUI({
+    selectInput(inputId = "teamInput1",
+                "Select  a team:",
+                choices = get_team_list(team_season()))
+  })
+  
+  
+  output$teamSeason_output <- renderUI({
+    HTML(
+      '<center><button id="teamSeason_input" class="btn btn-default action-button">Show</button></center>'
+    )
+  })
+  
+  output$general_teamPlot <- renderPlotly({
+    one_team_data <- one_team_data()
+    one_team_data$win <- ifelse(one_team_data$win, "Win", "Lose")
+    
+    p <- ggplot(one_team_data, aes(x = game_date, y = pts)) +
+      geom_line(colour = 'rgba(54, 162, 235, 0.5)') + geom_point(aes(fill = one_team_data$win, color = one_team_data$win))
+    
+    ggplotly(p)
+  })
+  
+  
+  ## player tab
+  
+  output$BallR <- renderUI({
+    source()
+  })
+  
+  ## data table tab
   output$data_table1 <- DT::renderDataTable({
     DT::datatable(team_season_data(),
                   options = list(lengthMenu = c(5, 30, 50), pageLength = 5))
   })
-  
 }
