@@ -157,9 +157,16 @@ server <- function(input, output, session) {
                position = "identity") + 
       geom_bar(data = subset(compare_data.long, Player == player_list[2]), 
                stat = "identity") +
-      scale_y_continuous() +
+      scale_y_continuous(breaks=seq(-1500, 1500, 100), labels=abs(seq(-1500, 1500, 100))) +
       coord_flip() +
-      theme_bw()
+      theme(axis.line = element_blank(),
+            axis.ticks = element_blank(),
+            legend.title = element_blank(),
+            panel.grid.major = element_blank(),
+            panel.grid.minor = element_blank(),
+            panel.border = element_blank(),
+            panel.background = element_blank()) +
+      xlab("Player Stats") + ylab(NULL)
     
     ggplotly(p)
   })
@@ -185,7 +192,17 @@ server <- function(input, output, session) {
     one_team_data$win <- ifelse(one_team_data$win, "Win", "Lose")
     
     p <- ggplot(one_team_data, aes(x = game_date, y = pts)) +
-      geom_line(colour = 'rgba(54, 162, 235, 0.5)') + geom_point(aes(fill = one_team_data$win, color = one_team_data$win))
+      geom_line(colour = 'rgba(54, 162, 235, 0.5)') + 
+      geom_point(aes(fill = one_team_data$win, color = one_team_data$win)) +
+      theme(axis.line = element_blank(),
+            axis.ticks = element_blank(),
+            legend.title = element_blank(),
+            panel.grid.major = element_blank(),
+            panel.grid.minor = element_blank(),
+            panel.border = element_blank(),
+            panel.background = element_blank()) +
+      ylab("Points") +
+      xlab("Game date")
     
     ggplotly(p)
   })

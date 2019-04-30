@@ -50,11 +50,6 @@ sidebar <- dashboardSidebar(sidebarMenu(
     icon = icon("pie-chart")
   ),
   menuItem(
-    "Play by Play Analysis",
-    tabName = "playbyplay_stat",
-    icon = icon("bar-chart")
-  ),
-  menuItem(
     "Explore Data",
     tabName = "raw_data",
     icon = icon("bar-chart")
@@ -141,7 +136,6 @@ body <- dashboardBody(
               
               fluidRow(
                 box(
-                  title = "Stats",
                   width = 12,
                   div(style = 'overflow-x: scroll', plotlyOutput("comparePlot1")))
               )
@@ -155,31 +149,22 @@ body <- dashboardBody(
                 box(
                   h2("General Team Performance"),
                   width = 12,
-                  title = "Controls",
-                  status = "danger",
                   solidHeader = TRUE,
-                  box (
-                    width = 4,
+                  column(3,
                     selectInput(
                       inputId = "seasonInput2",
                       "Choose a season:",
                       choices = get_seasons(),
                       selected = 2018
-                    ),
-                    uiOutput("teamOutput1"),
-                    uiOutput("teamSeason_output")
-                  )
+                    )),
+                  column(3,
+                         uiOutput("teamOutput1")),
+                  column(1,
+                         uiOutput("teamSeason_output"), style="padding-top: 24px"
+                  ),
+                  column(12,div(style = 'overflow-x: scroll', plotlyOutput("general_teamPlot")))
                 )
-              ),
-              
-              fluidRow(
-                
-                
-                box(
-                  title = "Team Performance",
-                  width = 12,
-                  div(style = 'overflow-x: scroll', plotlyOutput("general_teamPlot"))
-                )
+               
               )
             )
     ),
@@ -194,19 +179,17 @@ body <- dashboardBody(
     tabItem(tabName = "raw_data",
         fluidPage(
               fluidRow(
-                box (
-                  width = 4,
-                  selectInput(
+                box(
+                  column(2,selectInput(
                     inputId = "seasonInput3",
                     "Choose a season:",
                     choices = get_seasons(),
                     selected = 2018
-                  )
-                ),
-              box(
-                dataTableOutput("data_table1"),
-                width = 12
-              )
+                    )), 
+                  dataTableOutput("data_table1"),
+                  style="overflow: auto",
+                  width = 12
+                )
             )
           )
     ), 
