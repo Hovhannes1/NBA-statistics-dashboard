@@ -58,6 +58,14 @@ server <- function(input, output, session) {
     cbind(team2, age2, row.names = NULL)
   })
   
+  ## Player shots data
+  
+  court_image <- reactive({
+    courtImg.URL <- "https://thedatagame.files.wordpress.com/2016/03/nba_court.jpg"
+    court <- rasterGrob(readJPEG(getURLContent(courtImg.URL)),
+                        width=unit(1,"npc"), height=unit(1,"npc"))
+    court
+  })
   
   
   ### Outputs ###

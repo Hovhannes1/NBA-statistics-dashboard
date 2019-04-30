@@ -26,9 +26,6 @@ shotDataf$LOC_X <- as.numeric(as.character(shotDataf$LOC_X))
 shotDataf$LOC_Y <- as.numeric(as.character(shotDataf$LOC_Y))
 shotDataf$SHOT_DISTANCE <- as.numeric(as.character(shotDataf$SHOT_DISTANCE))
 
-# have a look at the data
-View(shotDataf)
-
 
 ## start plots
 # simple plot using EVENT_TYPE to colour the dots

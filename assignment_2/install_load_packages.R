@@ -7,15 +7,19 @@ required_packages = c(
   "dplyr",
   "DT",
   "httr",
+  "RCurl",
   "devtools",
   "stringr",
   "rvest",
   "reshape2",
+  "grid",
+  "gridExtra",
   "hexbin",
-  "jsonlite"
+  "rjson",
+  "jpeg"
 )
 
-packages_to_install <-required_packages[!(required_packages %in% installed.packages()[, 1])]
+packages_to_install <- required_packages[!(required_packages %in% installed.packages()[, 1])]
 
 if (length(packages_to_install) > 0) {
   install.packages(packages_to_install, repos = "https://cran.rstudio.com")
