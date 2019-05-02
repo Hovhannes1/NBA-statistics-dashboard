@@ -143,6 +143,11 @@ server <- function(input, output, session) {
   })
   
   
+  output$player_distribution <- renderPlotly({
+    
+    
+  })
+  
   ## player comparison tab
   
   output$playerOutput1 <- renderUI({
