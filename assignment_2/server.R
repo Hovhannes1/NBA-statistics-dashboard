@@ -146,7 +146,23 @@ server <- function(input, output, session) {
   output$player_distribution <- renderPlotly({
     player_avg <- player_season_avg()
     
+    p <- ggplot(player_avg, aes(x = ast, y = reb)) +
+      geom_point(size = player_avg$pts/5,  shape = 21, alpha= 0.5, aes(fill = player_avg$fgm/player_avg$fga, color = "blue")) +
+      theme(axis.line = element_blank(),
+            axis.text.x = element_blank(),
+            axis.ticks = element_blank(),
+            panel.grid.major = element_blank(),
+            panel.grid.minor = element_blank(),
+            panel.border = element_blank(),
+            panel.background = element_blank()) +
+      xlab("Assists Per Game") +
+      ylab("Rebounds Per Game") +
+      scale_colour_brewer() +  
+      coord_flip() +
+      ggtitle("Players Performance") + labs(fill = "Fgm/Fga")
+      
     
+    ggplotly(p)
     
   })
   
