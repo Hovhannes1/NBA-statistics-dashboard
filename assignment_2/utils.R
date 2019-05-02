@@ -7,8 +7,18 @@ get_seasons <- function(start = 1996) {
   
 }
 
-## get teams data by season
-get_teams_by_season <- function(season) {
+## get team total data by season
+get_teams_by_season_total <- function(season) {
+  
+}
+
+## get team average data by season
+get_teams_by_season_pergame <- function(season) {
+  
+}
+
+## get games data by season
+get_games_by_season <- function(season) {
   team_stat <- team_game_logs(league = "nba", season =  season)
   
   team_stat <- na.omit(team_stat)
@@ -17,8 +27,8 @@ get_teams_by_season <- function(season) {
 }
 
 
-## get team data by season
-get_team_data <- function(df, team) {
+## get team game data by season
+get_team_games_data <- function(df, team) {
   one_team <- df %>%
     filter(team_name == team)
   
@@ -55,7 +65,7 @@ get_players_by_season_total <- function(season) {
 
 ## get average data for season
 get_players_by_season_pergame <- function(season) {
-  players_total <- get_players_by_season_total(swason)
+  players_total <- get_players_by_season_total(season)
   
   players_avg <- players_total[, 1:6]
   players_avg[, 7:8] <- (players[, 7:8] / players[, 6]) * 100

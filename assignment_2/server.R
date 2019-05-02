@@ -8,7 +8,7 @@ server <- function(input, output, session) {
   ## general data
   
   team_season <- reactive({
-    get_teams_by_season(as.numeric(input$seasonInput2))
+    get_games_by_season(as.numeric(input$seasonInput2))
   })
   
   
@@ -65,7 +65,7 @@ server <- function(input, output, session) {
   ## team analysis data
   
   one_team_data <- eventReactive(input$teamSeasonBtnInput, {
-    get_team_data(team_season(), input$teamInput1)
+    get_team_games_data(team_season(), input$teamInput1)
     
   })
   
