@@ -51,6 +51,16 @@ get_players_by_season_total <- function(season) {
   
 }
 
+## get average data for season
+get_players_by_season_pergame <- function(season) {
+  players_total <- get_players_by_season_total(swason)
+  
+  players_avg <- players_total[, 1:6]
+  players_avg[, 7:8] <- (players[, 7:8] / players[, 6]) * 100
+  players_avg[, 9:26] <- players[, 9:26] / players[, 6]
+  
+  players_avg
+}
 
 ## get the list of players
 get_player_list <- function(df) {

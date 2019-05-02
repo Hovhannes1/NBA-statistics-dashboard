@@ -63,7 +63,7 @@ body <- dashboardBody(
               fluidRow(
                 box(
                   title = "Player 1",
-                  status = "warning",
+                  status = "danger",
                   solidHeader = TRUE,
                   collapsible = F,
                   width = 4,
@@ -76,7 +76,7 @@ body <- dashboardBody(
                 
                 box(
                   title = "Controls",
-                  status = "danger",
+                  status = "warning",
                   solidHeader = TRUE,
                   width = 4,
                   height = 330,
