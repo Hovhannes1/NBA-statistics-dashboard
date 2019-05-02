@@ -21,10 +21,14 @@ sidebar <- dashboardSidebar(sidebarMenu(
     icon = icon("home", lib = 'glyphicon')
   ),
   menuItem(
+    "Team Comparison",
+    tabName = "team_compare",
+    icon = icon("bar-chart")
+  ),
+  menuItem(
     "Player Comparison",
-    tabName = "compare",
-    icon = icon("bar-chart"),
-    badgeColor = "purple"
+    tabName = "player_compare",
+    icon = icon("bar-chart")
   ),
   menuItem(
     "Team Analysis",
@@ -41,6 +45,8 @@ sidebar <- dashboardSidebar(sidebarMenu(
 
 body <- dashboardBody(
   tabItems(
+    
+    ## General tab content
     tabItem(tabName = "general",
             fluidPage(
               fluidRow( 
@@ -49,16 +55,72 @@ body <- dashboardBody(
                        
                 ),
                 column(6,
-                  title = "Player Performance",
-                  plotlyOutput("")
+                       title = "Player Performance",
+                       plotlyOutput("player_distribution")
                   
                 )
               )
             )
     ),
     
-    # Comparison tab content
-    tabItem(tabName = "compare",
+    # Team comparison tab content
+    tabItem(tabName = "team_compare",
+            fluidPage(
+              fluidRow(
+                box(
+                  title = "Team 1",
+                  status = "danger",
+                  solidHeader = TRUE,
+                  collapsible = F,
+                  width = 4,
+                  height = 330,
+                  htmlOutput("team1ImgOutput"),
+                  HTML(
+                    '<center><div id="team_info1" class="shiny-html-output"></div></center>'
+                  )
+                ),
+                
+                box(
+                  title = "Controls",
+                  status = "warning",
+                  solidHeader = TRUE,
+                  width = 4,
+                  height = 330,
+                  selectInput(
+                    inputId = "seasonInput5",
+                    "Choose a season:",
+                    choices = get_seasons(),
+                    selected = 2018
+                  ),
+                  uiOutput("teamOutput1"),
+                  uiOutput("teamOutput2"),
+                  uiOutput("teamCompareBtn")
+                ),
+                
+                box(
+                  title = "Team 2",
+                  status = "danger",
+                  solidHeader = TRUE,
+                  collapsible = F,
+                  width = 4,
+                  height = 330,
+                  htmlOutput("team2ImgOutput"),
+                  HTML(
+                    '<center><div id="team_info2" class="shiny-html-output"></div></center>'
+                  )
+                )
+              ),
+              
+              fluidRow(
+                box(
+                  width = 12,
+                  div(style = 'overflow-x: scroll', plotlyOutput("teamComparePlot1")))
+              )
+            )
+    ),
+    
+    # Player comparison tab content
+    tabItem(tabName = "player_compare",
             fluidPage(
               fluidRow(
                 box(
@@ -70,7 +132,7 @@ body <- dashboardBody(
                   height = 330,
                   htmlOutput("player1imgOutput"),
                   HTML(
-                    '<center><div id="info1" class="shiny-html-output"></div></center>'
+                    '<center><div id="player_info1" class="shiny-html-output"></div></center>'
                   )
                 ),
                 
@@ -86,9 +148,9 @@ body <- dashboardBody(
                     choices = get_seasons(),
                     selected = 2018
                   ),
-                  uiOutput("player1Output"),
-                  uiOutput("player2Output"),
-                  uiOutput("compareBtn")
+                  uiOutput("playerOutput1"),
+                  uiOutput("playerOutput2"),
+                  uiOutput("playerCompareBtn")
                 ),
                 
                 box(
@@ -100,7 +162,7 @@ body <- dashboardBody(
                   height = 330,
                   htmlOutput("player2imgOutput"),
                   HTML(
-                    '<center><div id="info2" class="shiny-html-output"></div></center>'
+                    '<center><div id="player_info2" class="shiny-html-output"></div></center>'
                   )
                 )
               ),
@@ -108,7 +170,7 @@ body <- dashboardBody(
               fluidRow(
                 box(
                   width = 12,
-                  div(style = 'overflow-x: scroll', plotlyOutput("comparePlot1")))
+                  div(style = 'overflow-x: scroll', plotlyOutput("playerComparePlot1")))
               )
             )
     ),
@@ -129,9 +191,10 @@ body <- dashboardBody(
                       selected = 2018
                     )),
                   column(3,
-                         uiOutput("teamOutput1")),
+                         uiOutput("teamOutput3")),
                   column(1,
-                         uiOutput("teamSeasonBtn"), style="padding-top: 24px"
+                         uiOutput("teamSeasonBtn"), 
+                         style="padding-top: 24px"
                   ),
                   column(12,div(style = 'overflow-x: scroll', plotlyOutput("general_teamPlot")))
                 )
@@ -163,7 +226,7 @@ body <- dashboardBody(
                   ),
                   column(5,
                          textOutput("playerName"),
-                         htmlOutput("playerImg1"),
+                         htmlOutput("player3Img"),
                          HTML(
                            '<center><div id="playerInfo" class="shiny-html-output"></div></center>'
                          )
@@ -182,24 +245,6 @@ body <- dashboardBody(
                 ),
                 column(6,
                        plotOutput("shortChart4")                      
-                )
-            )
-          )
-    ),
-    
-    tabItem(tabName = "raw_data",
-        fluidPage(
-              fluidRow(
-                box(
-                  column(2,selectInput(
-                    inputId = "seasonInput3",
-                    "Choose a season:",
-                    choices = get_seasons(),
-                    selected = 2018
-                    )), 
-                  dataTableOutput("data_table1"),
-                  style="overflow: auto",
-                  width = 12
                 )
             )
           )

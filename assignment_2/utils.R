@@ -37,6 +37,7 @@ get_team_list <- function(df) {
   team_df
 }
 
+
 ## getting total player statistics by season
 get_players_by_season_total <- function(season) {
   filter <- filter_per_player(league = "nba", season = season)
@@ -51,6 +52,7 @@ get_players_by_season_total <- function(season) {
   
 }
 
+
 ## get average data for season
 get_players_by_season_pergame <- function(season) {
   players_total <- get_players_by_season_total(swason)
@@ -62,6 +64,7 @@ get_players_by_season_pergame <- function(season) {
   players_avg
 }
 
+
 ## get the list of players
 get_player_list <- function(df) {
   player_df <- df %>%
@@ -71,6 +74,7 @@ get_player_list <- function(df) {
   
   player_df
 }
+
 
 ## get player ID from name
 get_playerID_from_name <- function(playerName, df) {
@@ -95,6 +99,7 @@ get_player_table <- function(player, df) {
 get_player_age <- function(player_table_df) {
   player_table_df["Age"] %>% unique()
 }
+
 
 ## get player team
 get_player_team <- function(player_table_df) {

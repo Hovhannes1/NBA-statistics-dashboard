@@ -5,20 +5,21 @@
 
 server <- function(input, output, session) {
   
-  ## general team data
+  ## general data
   
   team_season <- reactive({
     get_teams_by_season(as.numeric(input$seasonInput2))
   })
   
-  team_season_data <- reactive({
-    get_teams_by_season(as.numeric(input$seasonInput3))
+  
+  player_season_avg <- reactive({
+    get_players_by_season_pergame(as.numeric(input$seasonInput4))
   })
   
-  one_team_data <- eventReactive(input$teamSeasonBtnInput, {
-    get_team_data(team_season(), input$teamInput1)
-    
-  })
+  
+  ## team comparison data
+  
+  
   
   
   ## player comparison data 
@@ -27,7 +28,7 @@ server <- function(input, output, session) {
     get_players_by_season_total(as.numeric(input$seasonInput1))
   })
   
-  player_vs_player <- eventReactive(input$compareBtnInput, {
+  player_vs_player <- eventReactive(input$playerCompareBtnInput, {
     p1 <- get_player_table(input$player1Input, player_totals())
     p2 <- get_player_table(input$player2Input, player_totals())
     
@@ -35,16 +36,16 @@ server <- function(input, output, session) {
   })
   
   
-  img1 <- eventReactive(input$compareBtnInput, {
+  img1 <- eventReactive(input$playerCompareBtnInput, {
     get_pic_link(input$player1Input)
   })
   
-  img2 <- eventReactive(input$compareBtnInput, {
+  img2 <- eventReactive(input$playerCompareBtnInput, {
     get_pic_link(input$player2Input)
     
   })
   
-  info1 <- eventReactive(input$compareBtnInput, {
+  player_info1 <- eventReactive(input$playerCompareBtnInput, {
     pvsp <- player_vs_player()
     age1 <- get_player_age(pvsp[1, ])
     team1 <- get_player_team(pvsp[1, ])
@@ -52,7 +53,7 @@ server <- function(input, output, session) {
     cbind(team1, age1, row.names = NULL)
   })
   
-  info2 <- eventReactive(input$compareBtnInput, {
+  player_info2 <- eventReactive(input$playerCompareBtnInput, {
     pvsp <- player_vs_player()
     age2 <- get_player_age(pvsp[2, ])
     team2 <- get_player_team(pvsp[2, ])
@@ -61,7 +62,15 @@ server <- function(input, output, session) {
   })
   
   
-  ## Player shots data
+  ## team analysis data
+  
+  one_team_data <- eventReactive(input$teamSeasonBtnInput, {
+    get_team_data(team_season(), input$teamInput1)
+    
+  })
+  
+  
+  ## player analysis data
   
   player_totals1 <- reactive({
     get_players_by_season_total(as.numeric(input$seasonInput4))
@@ -134,23 +143,23 @@ server <- function(input, output, session) {
   })
   
   
-  ## compare tab
+  ## player comparison tab
   
-  output$player1Output <- renderUI({
+  output$playerOutput1 <- renderUI({
     selectInput(inputId = "player1Input",
                 "Select player 1:",
                 choices = get_player_list(player_totals()))
   })
   
-  output$player2Output <- renderUI({
+  output$playerOutput2 <- renderUI({
     selectInput(inputId = "player2Input",
                 "Select player 2:",
                 choices = get_player_list(player_totals()))
   })
   
-  output$compareBtn <- renderUI({
+  output$playerCompareBtn <- renderUI({
     HTML(
-      '<center><button id="compareBtnInput" class="btn btn-default action-button">Compare</button></center>'
+      '<center><button id="playerCompareBtnInput" class="btn btn-default action-button">Compare</button></center>'
     )
   })
   
@@ -170,16 +179,16 @@ server <- function(input, output, session) {
       '</center>')
   })
   
-  output$info1 <- renderTable({
-    info1()
+  output$player_info1 <- renderTable({
+    player_info1()
   })
   
-  output$info2 <- renderTable({
-    info2()
+  output$player_info2 <- renderTable({
+    player_info2()
   })
   
   
-  output$comparePlot1 <- renderPlotly({
+  output$playerComparePlot1 <- renderPlotly({
     
     compare_data <- player_vs_player()[c(1, 8:21)]
     
@@ -212,7 +221,7 @@ server <- function(input, output, session) {
   
   ## team tab
   
-  output$teamOutput1 <- renderUI({
+  output$teamOutput3 <- renderUI({
     selectInput(inputId = "teamInput1",
                 "Select  a team:",
                 choices = get_team_list(team_season()))
@@ -266,7 +275,7 @@ server <- function(input, output, session) {
       '</center>')
   })
   
-  output$playerImg1 <- renderText({
+  output$player3Img <- renderText({
     c('<center>',
       '<img height="180" width="120" src="',
       player_img(),
