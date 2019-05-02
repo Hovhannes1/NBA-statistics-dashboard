@@ -62,6 +62,16 @@ get_player_list <- function(df) {
   player_df
 }
 
+## get player ID from name
+get_playerID_from_name <- function(playerName, df) {
+  player_id <- df %>%
+    filter(Player == playerName) %>%
+    select(person_id)
+  
+  player_id <- as.numeric(player_id[1, 1])
+}
+
+
 ## get player table
 get_player_table <- function(player, df) {
   player_table_df <- df %>%
@@ -105,8 +115,9 @@ get_pic_link <- function(player) {
 
 
 ## get player shots data
-get_player_shots <- function(playerID) {
-  shotURL <- paste("http://stats.nba.com/stats/shotchartdetail?CFID=33&CFPARAMS=2018-19&ContextFilter=&ContextMeasure=FGA&DateFrom=&DateTo=&PlayerPosition=&GameID=&GameSegment=&LastNGames=0&LeagueID=00&Location=&MeasureType=Base&Month=0&OpponentTeamID=0&Outcome=&PaceAdjust=N&PerMode=PerGame&Period=0&PlayerID=",playerID,"&PlusMinus=N&Position=&Rank=N&RookieYear=&Season=2018-19&SeasonSegment=&SeasonType=Regular+Season&TeamID=0&VsConference=&VsDivision=&mode=Advanced&showDetails=0&showShots=1&showZones=0", sep = "")
+get_player_shots <- function(playerID, season) {
+  s_next <- season - 2000 + 1
+  shotURL <- paste("http://stats.nba.com/stats/shotchartdetail?CFID=33&CFPARAMS=",season,"-",s_next,"&ContextFilter=&ContextMeasure=FGA&DateFrom=&DateTo=&PlayerPosition=&GameID=&GameSegment=&LastNGames=0&LeagueID=00&Location=&MeasureType=Base&Month=0&OpponentTeamID=0&Outcome=&PaceAdjust=N&PerMode=PerGame&Period=0&PlayerID=",playerID,"&PlusMinus=N&Position=&Rank=N&RookieYear=&Season=",season,"-",s_next,"&SeasonSegment=&SeasonType=Regular+Season&TeamID=0&VsConference=&VsDivision=&mode=Advanced&showDetails=0&showShots=1&showZones=0", sep = "")
   
   # import from JSON
   shotData <- fromJSON(file = shotURL, method="C")
@@ -124,24 +135,3 @@ get_player_shots <- function(playerID) {
   
   shotDataf
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

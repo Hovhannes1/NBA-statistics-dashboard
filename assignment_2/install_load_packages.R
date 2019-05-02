@@ -1,9 +1,9 @@
-
 required_packages = c(
   "shiny",
   "shinydashboard",
   "ggplot2",
   "plotly",
+  "plyr",
   "dplyr",
   "DT",
   "httr",

@@ -117,7 +117,7 @@ body <- dashboardBody(
                   ),
                   uiOutput("player1Output"),
                   uiOutput("player2Output"),
-                  uiOutput("compareOutput")
+                  uiOutput("compareBtn")
                 ),
                 
                 box(
@@ -160,7 +160,7 @@ body <- dashboardBody(
                   column(3,
                          uiOutput("teamOutput1")),
                   column(1,
-                         uiOutput("teamSeason_output"), style="padding-top: 24px"
+                         uiOutput("teamSeasonBtn"), style="padding-top: 24px"
                   ),
                   column(12,div(style = 'overflow-x: scroll', plotlyOutput("general_teamPlot")))
                 )
@@ -170,10 +170,49 @@ body <- dashboardBody(
     ),
     
     # Player tab content
-    tabItem(tabName = "compare",
+    tabItem(tabName = "player_stat",
             fluidPage(
-              uiOutput("BallR")
+              fluidRow(
+                  h2("Player Shots"),
+                  width = 12,
+                  solidHeader = TRUE,
+                  column(3,
+                         selectInput(
+                           inputId = "seasonInput4",
+                           "Choose a season:",
+                           choices = get_seasons(),
+                           selected = 2018
+                         )
+                  ),
+                  column(3,
+                         uiOutput("playerOutput3")
+                  ),
+                  column(1,
+                         uiOutput("shotChartBtn"), style="padding-top: 24px"
+                  ),
+                  column(5,
+                         htmlOutput("playerImg1"),
+                         HTML(
+                           '<center><div id="playerInfo" class="shiny-html-output"></div></center>'
+                         )
+                  )
+              ),
+              
+              fluidRow(
+                column(6,
+                       plotOutput("shortChart1")
+                ),
+                column(6,
+                       plotOutput("shortChart2")                      
+                ),
+                column(6,
+                       plotOutput("shortChart3")
+                ),
+                column(6,
+                       plotOutput("shortChart4")                      
+                )
             )
+          )
     ),
     
     tabItem(tabName = "raw_data",

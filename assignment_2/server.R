@@ -15,7 +15,7 @@ server <- function(input, output, session) {
     get_teams_by_season(as.numeric(input$seasonInput3))
   })
   
-  one_team_data <- eventReactive(input$teamSeason_input, {
+  one_team_data <- eventReactive(input$teamSeasonBtnInput, {
     get_team_data(team_season(), input$teamInput1)
     
   })
@@ -27,7 +27,7 @@ server <- function(input, output, session) {
     get_players_by_season_total(as.numeric(input$seasonInput1))
   })
   
-  player_vs_player <- eventReactive(input$compareInput, {
+  player_vs_player <- eventReactive(input$CompareBtnInput, {
     p1 <- get_player_table(input$player1Input, player_totals())
     p2 <- get_player_table(input$player2Input, player_totals())
     
@@ -35,30 +35,55 @@ server <- function(input, output, session) {
   })
   
   
-  img1 <- eventReactive(input$compareInput, {
+  img1 <- eventReactive(input$CompareBtnInput, {
     get_pic_link(input$player1Input)
   })
   
-  img2 <- eventReactive(input$compareInput, {
+  img2 <- eventReactive(input$CompareBtnInput, {
     get_pic_link(input$player2Input)
     
   })
   
-  info1 <- eventReactive(input$compareInput, {
+  info1 <- eventReactive(input$CompareBtnInput, {
     pvsp <- player_vs_player()
     age1 <- get_player_age(pvsp[1, ])
     team1 <- get_player_team(pvsp[1, ])
+    
     cbind(team1, age1, row.names = NULL)
   })
   
-  info2 <- eventReactive(input$compareInput, {
+  info2 <- eventReactive(input$CompareBtnInput, {
     pvsp <- player_vs_player()
     age2 <- get_player_age(pvsp[2, ])
     team2 <- get_player_team(pvsp[2, ])
+    
     cbind(team2, age2, row.names = NULL)
   })
   
+  
   ## Player shots data
+  
+  player_totals1 <- reactive({
+    get_players_by_season_total(as.numeric(input$seasonInput4))
+  })
+  
+  player_shots <- eventReactive(input$shotChartBtnInput, {
+    shots_data <- get_player_shots(get_playerID_from_name(input$playerInput3, player_totals1()),
+                                   as.numeric(input$seasonInput4))
+  })
+  
+  player_img <- eventReactive(input$shotChartBtnInput, {
+    get_pic_link(input$playerInput3)
+  })
+  
+  player_info <- eventReactive(input$shotChartBtnInput, {
+    player <- get_player_table(input$playerInput3, player_totals1())
+    
+    age <- get_player_age(player)
+    team <- get_player_team(player)
+    
+    cbind(team, age, row.names = NULL)
+  })
   
   court_image <- reactive({
     courtImg.URL <- "https://thedatagame.files.wordpress.com/2016/03/nba_court.jpg"
@@ -118,9 +143,9 @@ server <- function(input, output, session) {
                 choices = get_player_list(player_totals()))
   })
   
-  output$compareOutput <- renderUI({
+  output$CompareBtn <- renderUI({
     HTML(
-      '<center><button id="compareInput" class="btn btn-default action-button">Compare</button></center>'
+      '<center><button id="CompareBtnInput" class="btn btn-default action-button">Compare</button></center>'
     )
   })
   
@@ -189,9 +214,9 @@ server <- function(input, output, session) {
   })
   
   
-  output$teamSeason_output <- renderUI({
+  output$teamSeasonBtn <- renderUI({
     HTML(
-      '<center><button id="teamSeason_input" class="btn btn-default action-button">Show</button></center>'
+      '<center><button id="teamSeasonBtnInput" class="btn btn-default action-button">Show</button></center>'
     )
   })
   
@@ -218,9 +243,135 @@ server <- function(input, output, session) {
   
   ## player tab
   
-  output$BallR <- renderUI({
-    source()
+  output$playerOutput3 <- renderUI({
+    selectInput(inputId = "playerInput3",
+                "Select a player:",
+                choices = get_player_list(player_totals1()))
   })
+  
+  output$shotChartBtn <- renderUI({
+    HTML(
+      '<center><button id="shotChartBtnInput" class="btn btn-default action-button">Show</button></center>'
+    )
+  })
+  
+  output$playerImg1 <- renderText({
+    c('<center>',
+      '<img height="180" width="120" src="',
+      player_img(),
+      '">',
+      '</center>')
+  })
+  
+  output$playerInfo <- renderTable({
+    player_info()
+  })
+  
+  output$shortChart1 <- renderPlot({
+    shotDataf <- player_shots()
+    
+    p <- ggplot(shotDataf, aes(x=LOC_X, y=LOC_Y)) + 
+      annotation_custom(court_image(), -250, 250, -50, 420) +
+      geom_point(aes(colour = SHOT_ZONE_BASIC, shape = EVENT_TYPE)) +
+      xlim(-250, 250) +
+      ylim(-50, 420) +
+      geom_rug(alpha = 0.2) +
+      coord_fixed() +
+      ggtitle(paste("Shot Chart\n", unique(shotDataf$PLAYER_NAME), sep = "")) +
+      theme(line = element_blank(),
+            axis.title.x = element_blank(),
+            axis.title.y = element_blank(),
+            axis.text.x = element_blank(),
+            axis.text.y = element_blank(),
+            legend.title = element_blank(),
+            plot.title = element_text(size = 15, lineheight = 0.9, face = "bold"))
+    
+    p
+  })
+  
+  output$shortChart2 <- renderPlot({
+    shotDataf <- player_shots()
+    
+    p <- ggplot(shotDataf, aes(x=LOC_X, y=LOC_Y)) + 
+      annotation_custom(court_image(), -250, 250, -52, 418) +
+      geom_point(aes(colour = EVENT_TYPE, alpha = 0.8), size = 3) +
+      scale_color_manual(values = c("#008000", "#FF6347")) +
+      guides(alpha = FALSE, size = FALSE) +
+      xlim(250, -250) +
+      ylim(-52, 418) +
+      geom_rug(alpha = 0.2) +
+      coord_fixed() +
+      ggtitle(paste("Shot Chart\n", unique(shotDataf$PLAYER_NAME), sep = "")) +
+      theme(line = element_blank(),
+            axis.title.x = element_blank(),
+            axis.title.y = element_blank(),
+            axis.text.x = element_blank(),
+            axis.text.y = element_blank(),
+            legend.title = element_blank(),
+            plot.title = element_text(size = 17, lineheight = 1.2, face = "bold"))
+    
+    p
+  })
+  
+  output$shortChart3 <- renderPlot({
+    shotDataf <- player_shots()
+    
+    p <- ggplot(shotDataf, aes(x=LOC_X, y=LOC_Y)) + 
+      annotation_custom(court_image(), -250, 250, -52, 418) +
+      stat_binhex(bins = 25, colour = "gray", alpha = 0.7) +
+      scale_fill_gradientn(colours = c("yellow","orange","red")) +
+      guides(alpha = FALSE, size = FALSE) +
+      xlim(250, -250) +
+      ylim(-52, 418) +
+      geom_rug(alpha = 0.2) +
+      coord_fixed() +
+      ggtitle(paste("Shot Chart\n", unique(shotDataf$PLAYER_NAME), sep = "")) +
+      theme(line = element_blank(),
+            axis.title.x = element_blank(),
+            axis.title.y = element_blank(),
+            axis.text.x = element_blank(),
+            axis.text.y = element_blank(),
+            legend.title = element_blank(),
+            plot.title = element_text(size = 17, lineheight = 1.2, face = "bold"))
+    
+      
+    p
+  })
+  
+  output$shortChart4 <- renderPlot({
+    shotDataf <- player_shots()
+    
+    shotDataS <- shotDataf[which(!shotDataf$SHOT_ZONE_BASIC=='Backcourt'), ]
+    shotS <- plyr::ddply(shotDataS, .(SHOT_ZONE_BASIC), summarize, 
+                   SHOTS_ATTEMPTED = length(SHOT_MADE_FLAG),
+                   SHOTS_MADE = sum(as.numeric(as.character(SHOT_MADE_FLAG))),
+                   MLOC_X = mean(LOC_X),
+                   MLOC_Y = mean(LOC_Y))
+    
+    shotS$SHOT_ACCURACY <- (shotS$SHOTS_MADE / shotS$SHOTS_ATTEMPTED)
+    shotS$SHOT_ACCURACY_LAB <- paste(as.character(round(100 * shotS$SHOT_ACCURACY, 1)), "%", sep="")
+    
+    p <- ggplot(shotS, aes(x=MLOC_X, y=MLOC_Y)) + 
+      annotation_custom(court_image(), -250, 250, -52, 418) +
+      geom_point(aes(colour = SHOT_ZONE_BASIC, size = SHOT_ACCURACY, alpha = 0.8), size = 8) +
+      geom_text(aes(colour = SHOT_ZONE_BASIC, label = SHOT_ACCURACY_LAB), vjust = -1.2, size = 5) +
+      guides(alpha = FALSE, size = FALSE) +
+      xlim(250, -250) +
+      ylim(-52, 418) +
+      coord_fixed() +
+      ggtitle(paste("Shot Accuracy\n", unique(shotDataf$PLAYER_NAME), sep = "")) +
+      theme(line = element_blank(),
+            axis.title.x = element_blank(),
+            axis.title.y = element_blank(),
+            axis.text.x = element_blank(),
+            axis.text.y = element_blank(),
+            legend.title = element_blank(),
+            legend.text=element_text(size = 12),
+            plot.title = element_text(size = 17, lineheight = 1.2, face = "bold"))
+    
+    p
+  })
+  
   
   ## data table tab
   output$data_table1 <- DT::renderDataTable({
