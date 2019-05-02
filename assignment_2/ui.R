@@ -5,23 +5,11 @@
 
 ## creating my dashboard
 header <- dashboardHeader(
-  title = "Player Comparison",
+  title = "NBA Stats",
   dropdownMenu(
     type = "messages",
-    messageItem(from = "Mark Hovsepyan",
-                message = "Welcome! Let's start!")
-  ),
-  dropdownMenu(
-    type = "tasks",
-    messageItem(from = "Hovhannes Stepanyan",
-                message = "Let's win together")
-  ),
-  dropdownMenu(
-    type = "notifications",
     notificationItem(
-      text = "Please read instructions to start",
-      icon = icon("info-circle"),
-      status = "success"
+      a("stats.nba.com", href = "https://stats.nba.com/")
     )
   )
 )
@@ -33,10 +21,9 @@ sidebar <- dashboardSidebar(sidebarMenu(
     icon = icon("home", lib = 'glyphicon')
   ),
   menuItem(
-    "Comparison",
+    "Player Comparison",
     tabName = "compare",
     icon = icon("bar-chart"),
-    badgeLabel = "app",
     badgeColor = "purple"
   ),
   menuItem(
@@ -48,16 +35,6 @@ sidebar <- dashboardSidebar(sidebarMenu(
     "Player Analysis",
     tabName = "player_stat",
     icon = icon("pie-chart")
-  ),
-  menuItem(
-    "Explore Data",
-    tabName = "raw_data",
-    icon = icon("bar-chart")
-  ),
-  menuItem(
-    "NBA Official Satistics",
-    icon = icon("send", lib = 'glyphicon'),
-    href = "https://stats.nba.com"
   )
 ))
 
@@ -66,22 +43,16 @@ body <- dashboardBody(
   tabItems(
     tabItem(tabName = "general",
             fluidPage(
-              fluidRow(
-                box(
-                  title = "Team Performance",
-                  width = 6,
-                  div(style = 'overflow-x: scroll', plotlyOutput("win_percentage"))
+              fluidRow( 
+                column(6,
+                       plotlyOutput("win_percentage")
+                       
                 ),
-                box(
-                  title = "Team",
-                  width = 6,
-                  div(style = 'overflow-x: scroll', plotlyOutput(""))
+                column(6,
+                  title = "Player Performance",
+                  plotlyOutput("")
+                  
                 )
-              ),
-              
-              fluidRow(
-                box(),
-                box()
               )
             )
     ),
@@ -191,6 +162,7 @@ body <- dashboardBody(
                          uiOutput("shotChartBtn"), style="padding-top: 24px"
                   ),
                   column(5,
+                         textOutput("playerName"),
                          htmlOutput("playerImg1"),
                          HTML(
                            '<center><div id="playerInfo" class="shiny-html-output"></div></center>'
@@ -231,13 +203,6 @@ body <- dashboardBody(
                 )
             )
           )
-    ), 
-
-    tabItem(tabName = "sources",
-            h4(
-              "All the data is taken from",
-              a("NBA.com", href = "https://stats.nba.com/")
-            )
     )
   )
 )

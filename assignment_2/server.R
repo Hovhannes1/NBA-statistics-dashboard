@@ -27,7 +27,7 @@ server <- function(input, output, session) {
     get_players_by_season_total(as.numeric(input$seasonInput1))
   })
   
-  player_vs_player <- eventReactive(input$CompareBtnInput, {
+  player_vs_player <- eventReactive(input$compareBtnInput, {
     p1 <- get_player_table(input$player1Input, player_totals())
     p2 <- get_player_table(input$player2Input, player_totals())
     
@@ -35,16 +35,16 @@ server <- function(input, output, session) {
   })
   
   
-  img1 <- eventReactive(input$CompareBtnInput, {
+  img1 <- eventReactive(input$compareBtnInput, {
     get_pic_link(input$player1Input)
   })
   
-  img2 <- eventReactive(input$CompareBtnInput, {
+  img2 <- eventReactive(input$compareBtnInput, {
     get_pic_link(input$player2Input)
     
   })
   
-  info1 <- eventReactive(input$CompareBtnInput, {
+  info1 <- eventReactive(input$compareBtnInput, {
     pvsp <- player_vs_player()
     age1 <- get_player_age(pvsp[1, ])
     team1 <- get_player_team(pvsp[1, ])
@@ -52,7 +52,7 @@ server <- function(input, output, session) {
     cbind(team1, age1, row.names = NULL)
   })
   
-  info2 <- eventReactive(input$CompareBtnInput, {
+  info2 <- eventReactive(input$compareBtnInput, {
     pvsp <- player_vs_player()
     age2 <- get_player_age(pvsp[2, ])
     team2 <- get_player_team(pvsp[2, ])
@@ -70,6 +70,10 @@ server <- function(input, output, session) {
   player_shots <- eventReactive(input$shotChartBtnInput, {
     shots_data <- get_player_shots(get_playerID_from_name(input$playerInput3, player_totals1()),
                                    as.numeric(input$seasonInput4))
+  })
+  
+  player_name <- eventReactive(input$Z, {
+    input$playerInput3
   })
   
   player_img <- eventReactive(input$shotChartBtnInput, {
@@ -123,6 +127,7 @@ server <- function(input, output, session) {
       ylab("Win Percentage") +
       scale_colour_brewer() +  
       coord_flip() +
+      ggtitle("Team Performance") +
       geom_text(size = 3, aes(x = Var1, y = perc + 4 , label = round(perc , 1)))
     
     ggplotly(p)
@@ -143,9 +148,9 @@ server <- function(input, output, session) {
                 choices = get_player_list(player_totals()))
   })
   
-  output$CompareBtn <- renderUI({
+  output$compareBtn <- renderUI({
     HTML(
-      '<center><button id="CompareBtnInput" class="btn btn-default action-button">Compare</button></center>'
+      '<center><button id="compareBtnInput" class="btn btn-default action-button">Compare</button></center>'
     )
   })
   
@@ -255,6 +260,12 @@ server <- function(input, output, session) {
     )
   })
   
+  output$playerName <- renderText({
+    c('<center>',
+      player_name(),
+      '</center>')
+  })
+  
   output$playerImg1 <- renderText({
     c('<center>',
       '<img height="180" width="120" src="',
@@ -277,7 +288,7 @@ server <- function(input, output, session) {
       ylim(-50, 420) +
       geom_rug(alpha = 0.2) +
       coord_fixed() +
-      ggtitle(paste("Shot Chart\n", unique(shotDataf$PLAYER_NAME), sep = "")) +
+      ggtitle('Shot Types') +
       theme(line = element_blank(),
             axis.title.x = element_blank(),
             axis.title.y = element_blank(),
@@ -301,7 +312,7 @@ server <- function(input, output, session) {
       ylim(-52, 418) +
       geom_rug(alpha = 0.2) +
       coord_fixed() +
-      ggtitle(paste("Shot Chart\n", unique(shotDataf$PLAYER_NAME), sep = "")) +
+      ggtitle("Hit and Miss") +
       theme(line = element_blank(),
             axis.title.x = element_blank(),
             axis.title.y = element_blank(),
@@ -325,7 +336,7 @@ server <- function(input, output, session) {
       ylim(-52, 418) +
       geom_rug(alpha = 0.2) +
       coord_fixed() +
-      ggtitle(paste("Shot Chart\n", unique(shotDataf$PLAYER_NAME), sep = "")) +
+      ggtitle("Shot Density") +
       theme(line = element_blank(),
             axis.title.x = element_blank(),
             axis.title.y = element_blank(),
@@ -359,7 +370,7 @@ server <- function(input, output, session) {
       xlim(250, -250) +
       ylim(-52, 418) +
       coord_fixed() +
-      ggtitle(paste("Shot Accuracy\n", unique(shotDataf$PLAYER_NAME), sep = "")) +
+      ggtitle("Shot Accuracy") +
       theme(line = element_blank(),
             axis.title.x = element_blank(),
             axis.title.y = element_blank(),
@@ -370,12 +381,5 @@ server <- function(input, output, session) {
             plot.title = element_text(size = 17, lineheight = 1.2, face = "bold"))
     
     p
-  })
-  
-  
-  ## data table tab
-  output$data_table1 <- DT::renderDataTable({
-    DT::datatable(team_season_data(),
-                  options = list(lengthMenu = c(5, 30, 50), pageLength = 5))
   })
 }
