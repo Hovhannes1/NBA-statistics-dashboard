@@ -144,6 +144,8 @@ server <- function(input, output, session) {
   
   
   output$player_distribution <- renderPlotly({
+    player_avg <- player_season_avg()
+    
     
     
   })
