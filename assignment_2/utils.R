@@ -68,8 +68,8 @@ get_players_by_season_pergame <- function(season) {
   players_total <- get_players_by_season_total(season)
   
   players_avg <- players_total[, 1:6]
-  players_avg[, 7:8] <- (players[, 7:8] / players[, 6]) * 100
-  players_avg[, 9:26] <- players[, 9:26] / players[, 6]
+  players_avg[, 7:8] <- (players_total[, 7:8] / players_total[, 6]) * 100
+  players_avg[, 9:26] <- players_total[, 9:26] / players_total[, 6]
   
   players_avg
 }
