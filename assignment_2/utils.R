@@ -7,15 +7,23 @@ get_seasons <- function(start = 1996) {
   
 }
 
-## get team total data by season
-get_teams_by_season_total <- function(season) {
+## get team years total/pergame data
+get_team_seasons <- function(teamID, permode = "PerGame") {
+  shotURL <- paste("https://stats.nba.com/stats/teamyearbyyearstats/?teamid=",teamID,"&leagueid=00&PerMode=",permode,"&seasontype=Regular%20Season", sep="")
+    
+  # import from JSON
+  teamSeasons <- fromJSON(file = shotURL, method="C")
   
+  teamSeasonsf <- as.data.frame(matrix(do.call(cbind, teamSeasons$resultSets[[1]]$rowSet), ncol = 34, byrow = TRUE))
+  
+  teamSeasonsf[teamSeasonsf == 'N/A' | teamSeasonsf == 'NULL'] = NA
+  
+  colnames(teamSeasonsf) <- teamSeasons$resultSets[[1]]$headers
+  
+
+  teamSeasonsf
 }
 
-## get team average data by season
-get_teams_by_season_pergame <- function(season) {
-  
-}
 
 ## get games data by season
 get_games_by_season <- function(season) {
@@ -47,6 +55,14 @@ get_team_list <- function(df) {
   team_df
 }
 
+## get team ID from name
+get_teamID_from_name <- function(teamName, df) {
+  team_id <- df %>%
+    filter(team_name == teamName) %>%
+    select(team_id)
+  
+  team_id <- as.numeric(team_id[1, 1])
+}
 
 ## getting total player statistics by season
 get_players_by_season_total <- function(season) {
@@ -148,7 +164,7 @@ get_player_shots <- function(playerID, season) {
   shotData <- fromJSON(file = shotURL, method="C")
   
   # unlist shot data, save into a data frame
-  shotDataf <- data.frame(matrix(unlist(shotData$resultSets[[1]][[3]]), ncol=24, byrow = TRUE))
+  shotDataf <- as.data.frame(matrix(unlist(shotData$resultSets[[1]][[3]]), ncol=24, byrow = TRUE))
   
   # shot data headers
   colnames(shotDataf) <- shotData$resultSets[[1]][[2]]

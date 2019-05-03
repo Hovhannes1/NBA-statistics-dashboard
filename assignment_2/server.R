@@ -19,7 +19,13 @@ server <- function(input, output, session) {
   
   ## team comparison data
   
+  team_season1 <- reactive({
+    get_games_by_season(as.numeric(input$seasonInput5))
+  })
   
+  team_years_pergame <- eventReactive(teamCompareBtnInput, {
+    get_team_seasons(get_teamID_from_name(input$teamInput1, team_season1()))
+  })
   
   
   ## player comparison data 
@@ -144,27 +150,30 @@ server <- function(input, output, session) {
   
   
   output$player_distribution <- renderPlotly({
-    player_avg <- player_season_avg()
+    player_avg <- player_season_avg() %>%
+      filter(games > 40)
     
     p <- ggplot(player_avg, aes(x = ast, y = reb)) +
-      geom_point(size = player_avg$pts/5,  shape = 21, alpha= 0.5, aes(fill = player_avg$fgm/player_avg$fga, color = "blue")) +
+      geom_point(size = player_avg$pts/5,  shape = 21, alpha= 0.5, 
+                 aes(fill = player_avg$fgm/player_avg$fga)) +
+      scale_fill_gradient(low="#000cff", high="red") +
+      coord_flip() +
       theme(axis.line = element_blank(),
-            axis.text.x = element_blank(),
             axis.ticks = element_blank(),
             panel.grid.major = element_blank(),
             panel.grid.minor = element_blank(),
             panel.border = element_blank(),
-            panel.background = element_blank()) +
+            panel.background = element_blank()) +  
+      ggtitle("Players Performance") + 
       xlab("Assists Per Game") +
       ylab("Rebounds Per Game") +
-      scale_colour_brewer() +  
-      coord_flip() +
-      ggtitle("Players Performance") + labs(fill = "Fgm/Fga")
+      labs(fill = "FG%")
       
     
     ggplotly(p)
     
   })
+  
   
   ## player comparison tab
   
