@@ -74,6 +74,17 @@ get_teamID_from_name <- function(teamName, df) {
   team_id <- as.numeric(team_id[1, 1])
 }
 
+## get team abbr from name
+get_team_abbr_from_name <- function(teamName, df) {
+  team_abbr <- df %>%
+    filter(team_name == teamName) %>%
+    select(team_abbr) %>%
+    unique()
+  
+  as.character(team_abbr[1,1])
+}
+
+
 ## getting total player statistics by season
 get_players_by_season_total <- function(season) {
   filter <- filter_per_player(league = "nba", season = season)
@@ -143,28 +154,6 @@ get_player_team <- function(player_table_df) {
 }
 
 
-## getting player pictures
-get_pic_link <- function(player) {
-  split <- str_split(tolower(player), " ")
-  name <- unlist(split)
-  two <- str_sub(name[1], 1, 2)
-  five <- str_sub(name[2], 1, 5)
-  first <- "01"
-  second <- "02"
-  third <- "03"
-  # placeholder
-  "https://d2p3bygnnzw9w3.cloudfront.net/req/999999999/images/klecko/placeholder.jpg"
-  convention <- paste0(five, two, first)
-  link <-
-    paste0(
-      "https://d2cwpp38twqe55.cloudfront.net/req/201712064/images/players/",
-      convention,
-      ".jpg"
-    )
-  link
-}
-
-
 ## get player shots data
 get_player_shots <- function(playerID, season) {
   s_next <- season - 2000 + 1
@@ -185,4 +174,41 @@ get_player_shots <- function(playerID, season) {
   shotDataf$SHOT_DISTANCE <- as.numeric(as.character(shotDataf$SHOT_DISTANCE))
   
   shotDataf
+}
+
+
+## getting player pictures
+get_pic_link <- function(player) {
+  split <- str_split(tolower(player), " ")
+  name <- unlist(split)
+  two <- str_sub(name[1], 1, 2)
+  five <- str_sub(name[2], 1, 5)
+  first <- "01"
+  second <- "02"
+  third <- "03"
+  # placeholder
+  "https://d2p3bygnnzw9w3.cloudfront.net/req/999999999/images/klecko/placeholder.jpg"
+  convention <- paste0(five, two, first)
+  link <-
+    paste0(
+      "https://d2cwpp38twqe55.cloudfront.net/req/201712064/images/players/",
+      convention,
+      ".jpg"
+    )
+  
+  link
+}
+
+
+## getting team logos
+get_team_logo <- function(team_abbr) {
+  link <-
+    paste0(
+      "https://www.nba.com/assets/logos/teams/primary/web/",
+      team_abbr,
+      ".svg"
+    )
+  
+  
+  link
 }

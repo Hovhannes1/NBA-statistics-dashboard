@@ -9,7 +9,6 @@ source('install_load_packages.R')
 #devtools::install_github('stephematician/statsnbaR')
 
 library(statsnbaR)
-
 ## get source files
 source('utils.R')
 source('ui.R')

@@ -99,7 +99,7 @@ body <- dashboardBody(
                 
                 box(
                   title = "Team 2",
-                  status = "danger",
+                  status = "info",
                   solidHeader = TRUE,
                   collapsible = F,
                   width = 4,

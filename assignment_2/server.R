@@ -23,13 +23,36 @@ server <- function(input, output, session) {
     get_games_by_season(as.numeric(input$seasonInput5))
   })
   
-  team_vs_team <- eventReactive(teamCompareBtnInput, {
-    t1_all <- get_team_seasons(get_teamID_from_name(input$teamInput1, team_season1()))
-    t2_all <- get_team_seasons(get_teamID_from_name(input$teamInput2, team_season1()))
-    t1 <- get_team_single_season(input$seasonInput5, t1_all)
-    t2 <- get_team_single_season(input$seasonInput5, t2_all)
+  team_vs_team <- eventReactive(input$teamCompareBtnInput, {
+    t1_all <- get_team_seasons(get_teamID_from_name(input$team1Input, team_season1()))
+    t2_all <- get_team_seasons(get_teamID_from_name(input$team2Input, team_season1()))
+    t1 <- get_team_single_season(as.numeric(input$seasonInput5), t1_all)
+    t2 <- get_team_single_season(as.numeric(input$seasonInput5), t2_all)
     
     rbind(t1, t2)
+  })
+  
+  team_img1 <- eventReactive(input$teamCompareBtnInput, {
+    get_team_logo(get_team_abbr_from_name(input$team1Input, team_season1()))
+  })
+  
+  
+  team_img2 <- eventReactive(input$teamCompareBtnInput, {
+    get_team_logo(get_team_abbr_from_name(input$team2Input, team_season1()))
+  })
+  
+  team_info1 <- eventReactive(input$teamCompareBtnInput, {
+    tvst <- team_vs_team()
+    team_name <- paste(tvst[1, 2], tvst[1, 3], sep = " ")
+    
+    team_name
+  })
+  
+  team_info2 <- eventReactive(input$teamCompareBtnInput, {
+    tvst <- team_vs_team()
+    team_name <- paste(tvst[2, 2], tvst[2, 3], sep = " ")
+    
+    team_name
   })
   
   
@@ -159,7 +182,7 @@ server <- function(input, output, session) {
       filter(games > 40)
     
     p <- ggplot(player_avg, aes(x = ast, y = reb)) +
-      geom_point(size = player_avg$pts/5,  shape = 21, alpha= 0.5, 
+      geom_point(size = player_avg$pts/5, color="blue", shape = 21, alpha= 0.5, 
                  aes(fill = player_avg$fgm/player_avg$fga)) +
       scale_fill_gradient(low="#000cff", high="red") +
       coord_flip() +
@@ -179,6 +202,76 @@ server <- function(input, output, session) {
     
   })
   
+  ## team comparison tab
+  
+  output$teamOutput1 <- renderUI({
+    selectInput(inputId = "team1Input",
+                "Select team 1:",
+                choices = get_team_list(team_season1()))
+  })
+  
+  output$teamOutput2 <- renderUI({
+    selectInput(inputId = "team2Input",
+                "Select team 2:",
+                choices = get_team_list(team_season1()))
+  })
+  
+  output$team1ImgOutput <- renderText({
+    c('<center>',
+      '<img height="180" width="120" src="',
+      team_img1(),
+      '">',
+      '</center>')
+  })
+  
+  output$team2ImgOutput <- renderText({
+    c('<center>',
+      '<img height="180" width="120" src="',
+      team_img2(),
+      '">',
+      '</center>')
+  })
+  
+  output$team_info1 <- renderText({
+    team_info1()
+  })
+  
+  output$team_info2 <- renderText({
+    team_info2()
+  })
+  
+  output$teamCompareBtn <- renderUI({
+    HTML(
+      '<center><button id="teamCompareBtnInput" class="btn btn-default action-button">Compare</button></center>'
+    )
+  })
+  
+  output$teamComparePlot1 <- renderPlotly({
+    team_vs_team <- team_vs_team()
+    
+    teams <- team_vs_team[, c(3, 24, 27:33)]
+    teams$FT_PCT <- as.numeric(teams$FT_PCT) * 100
+    
+    for (i in 2:9) {
+      teams[, i] <- as.numeric(teams[, i])
+    }
+    
+    teams[, 1] <- as.factor(unlist(teams[, 1])) 
+    
+    teams.long <- melt(teams, id.vars = "TEAM_NAME")
+    
+    p <- ggplot(data = teams.long, aes(x = variable, y = value, fill = TEAM_NAME)) +
+      geom_col( position = 'dodge') +
+      theme(axis.title = element_blank(),
+            panel.grid.major = element_blank(),
+            panel.grid.minor = element_blank(),
+            panel.border = element_blank(),
+            panel.background = element_blank()) + 
+      labs(fill = "Teams")
+    
+    ggplotly(p)
+    
+  })
   
   ## player comparison tab
   
@@ -330,6 +423,7 @@ server <- function(input, output, session) {
     p <- ggplot(shotDataf, aes(x=LOC_X, y=LOC_Y)) + 
       annotation_custom(court_image(), -250, 250, -50, 420) +
       geom_point(aes(colour = SHOT_ZONE_BASIC, shape = EVENT_TYPE)) +
+      scale_shape_manual(values=c(21, 4)) +
       xlim(-250, 250) +
       ylim(-50, 420) +
       geom_rug(alpha = 0.2) +
