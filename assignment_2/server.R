@@ -156,7 +156,9 @@ server <- function(input, output, session) {
     
     perc <- (team_win$win$cnt / team_win$Freq) * 100
     
-    p <- ggplot(team_win, aes(x = reorder(Var1, perc), y = perc)) +
+    p <- ggplot(team_win, aes(x = reorder(Var1, perc), y = perc, 
+                              text = paste('Team: ', Var1,
+                                           '<br>Win %:', round(perc, digits = 2)))) +
       geom_bar(stat = "identity", aes(fill= Var1)) +
       theme(axis.line = element_blank(),
             axis.text.x = element_blank(),
@@ -173,7 +175,7 @@ server <- function(input, output, session) {
       ggtitle("Team Performance") +
       geom_text(size = 3, aes(x = Var1, y = perc + 4 , label = round(perc , 1)))
     
-    ggplotly(p)
+    ggplotly(p, tooltip="text")
   })
   
   
@@ -181,7 +183,10 @@ server <- function(input, output, session) {
     player_avg <- player_season_avg() %>%
       filter(games > 40)
     
-    p <- ggplot(player_avg, aes(x = ast, y = reb)) +
+    p <- ggplot(player_avg, aes(x = ast, y = reb,
+                                text = paste('FG %: ', round(fgm/fga, digits = 2),
+                                             '<br>Assists: ', round(ast, digits = 2),
+                                             '<br>Rebounds: ', round(reb, digits = 2)))) +
       geom_point(size = player_avg$pts/5, color="blue", shape = 21, alpha= 0.5, 
                  aes(fill = player_avg$fgm/player_avg$fga)) +
       scale_fill_gradient(low="#000cff", high="red") +
@@ -198,7 +203,7 @@ server <- function(input, output, session) {
       labs(fill = "FG%")
       
     
-    ggplotly(p)
+    ggplotly(p, tooltip="text")
     
   })
   
@@ -260,7 +265,9 @@ server <- function(input, output, session) {
     
     teams.long <- melt(teams, id.vars = "TEAM_NAME")
     
-    p <- ggplot(data = teams.long, aes(x = variable, y = value, fill = TEAM_NAME)) +
+    p <- ggplot(data = teams.long, aes(x = variable, y = value, fill = TEAM_NAME,
+                                       text = paste('Team: ', TEAM_NAME,
+                                                    '<br>Value:', value))) +
       geom_col( position = 'dodge') +
       theme(axis.title = element_blank(),
             panel.grid.major = element_blank(),
@@ -269,7 +276,7 @@ server <- function(input, output, session) {
             panel.background = element_blank()) + 
       labs(fill = "Teams")
     
-    ggplotly(p)
+    ggplotly(p, tooltip="text")
     
   })
   
@@ -327,7 +334,9 @@ server <- function(input, output, session) {
     player_list <- c(compare_data[1, 1], compare_data[2, 1])
     
     
-    p <- ggplot(data = compare_data.long, aes(x = variable, y = value, fill = Player)) +
+    p <- ggplot(data = compare_data.long, aes(x = variable, y = value, fill = Player,
+                                              text = paste('Player: ', Player,
+                                                           '<br>Value:', value))) +
       geom_bar(data = subset(compare_data.long, Player == player_list[1]), 
                stat = "identity",
                mapping = aes(y = -value),
@@ -345,7 +354,7 @@ server <- function(input, output, session) {
             panel.background = element_blank()) +
       xlab("Player Stats") + ylab(NULL)
     
-    ggplotly(p)
+    ggplotly(p, tooltip="text")
   })
   
   
@@ -370,7 +379,9 @@ server <- function(input, output, session) {
     
     p <- ggplot(one_team_data, aes(x = game_date, y = pts)) +
       geom_line(colour = 'rgba(54, 162, 235, 0.5)') + 
-      geom_point(aes(fill = one_team_data$win, color = one_team_data$win)) +
+      geom_point(aes(fill = one_team_data$win, color = one_team_data$win,
+                     text = paste('Date: ', one_team_data$game_date,
+                                  '<br>Points:', one_team_data$pts))) +
       theme(axis.line = element_blank(),
             axis.ticks = element_blank(),
             legend.title = element_blank(),
@@ -381,7 +392,7 @@ server <- function(input, output, session) {
       ylab("Points") +
       xlab("Game date")
     
-    ggplotly(p)
+    ggplotly(p ,tooltip="text")
   })
   
   
