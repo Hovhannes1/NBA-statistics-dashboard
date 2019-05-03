@@ -70,11 +70,11 @@ server <- function(input, output, session) {
   })
   
   
-  img1 <- eventReactive(input$playerCompareBtnInput, {
+  player_img1 <- eventReactive(input$playerCompareBtnInput, {
     get_pic_link(input$player1Input)
   })
   
-  img2 <- eventReactive(input$playerCompareBtnInput, {
+  player_img2 <- eventReactive(input$playerCompareBtnInput, {
     get_pic_link(input$player2Input)
     
   })
@@ -184,9 +184,10 @@ server <- function(input, output, session) {
       filter(games > 40)
     
     p <- ggplot(player_avg, aes(x = ast, y = reb,
-                                text = paste('FG %: ', round(fgm/fga, digits = 2),
+                                text = paste('FG%: ', round((fgm/fga * 100), digits = 2),
                                              '<br>Assists: ', round(ast, digits = 2),
-                                             '<br>Rebounds: ', round(reb, digits = 2)))) +
+                                             '<br>Rebounds: ', round(reb, digits = 2),
+                                             '<br>Points: ', round(pts, digits = 2)))) +
       geom_point(size = player_avg$pts/5, color="blue", shape = 21, alpha= 0.5, 
                  aes(fill = player_avg$fgm/player_avg$fga)) +
       scale_fill_gradient(low="#000cff", high="red") +
@@ -267,7 +268,7 @@ server <- function(input, output, session) {
     
     p <- ggplot(data = teams.long, aes(x = variable, y = value, fill = TEAM_NAME,
                                        text = paste('Team: ', TEAM_NAME,
-                                                    '<br>Value:', value))) +
+                                                    '<br>', variable, 'Value:', value))) +
       geom_col( position = 'dodge') +
       theme(axis.title = element_blank(),
             panel.grid.major = element_blank(),
@@ -303,7 +304,7 @@ server <- function(input, output, session) {
   output$player1imgOutput <- renderText({
     c('<center>',
       '<img height="180" width="120" src="',
-      img1(),
+      player_img1(),
       '">',
       '</center>')
   })
@@ -311,7 +312,7 @@ server <- function(input, output, session) {
   output$player2imgOutput <- renderText({
     c('<center>',
       '<img height="180" width="120" src="',
-      img2(),
+      player_img2(),
       '">',
       '</center>')
   })
@@ -336,7 +337,7 @@ server <- function(input, output, session) {
     
     p <- ggplot(data = compare_data.long, aes(x = variable, y = value, fill = Player,
                                               text = paste('Player: ', Player,
-                                                           '<br>Value:', value))) +
+                                                           '<br>', variable, 'value:', value))) +
       geom_bar(data = subset(compare_data.long, Player == player_list[1]), 
                stat = "identity",
                mapping = aes(y = -value),
@@ -380,8 +381,9 @@ server <- function(input, output, session) {
     p <- ggplot(one_team_data, aes(x = game_date, y = pts)) +
       geom_line(colour = 'rgba(54, 162, 235, 0.5)') + 
       geom_point(aes(fill = one_team_data$win, color = one_team_data$win,
-                     text = paste('Date: ', one_team_data$game_date,
-                                  '<br>Points:', one_team_data$pts))) +
+                     text = paste('Date: ', game_date,
+                                  '<br>Points:', pts,
+                                  '<br>Outcome: ', win))) +
       theme(axis.line = element_blank(),
             axis.ticks = element_blank(),
             legend.title = element_blank(),
