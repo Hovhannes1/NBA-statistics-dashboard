@@ -9,7 +9,7 @@ get_seasons <- function(start = 1996) {
 
 ## get team years total/pergame data
 get_team_seasons <- function(teamID, permode = "PerGame") {
-  shotURL <- paste("https://stats.nba.com/stats/teamyearbyyearstats/?teamid=",teamID,"&leagueid=00&PerMode=",permode,"&seasontype=Regular%20Season", sep="")
+  shotURL <- paste("https://stats.nba.com/stats/teamyearbyyearstats/?teamid=",teamID,"&leagueid=00&PerMode=",permode,"&seasontype=Regular%20Season", sep = "")
     
   # import from JSON
   teamSeasons <- fromJSON(file = shotURL, method="C")
@@ -22,6 +22,16 @@ get_team_seasons <- function(teamID, permode = "PerGame") {
   
 
   teamSeasonsf
+}
+
+
+## get one season of team data
+get_team_single_season <- function(season, df) {
+  s_next <- season - 2000 + 1
+  one_season <- df %>%
+    filter(YEAR == paste(season, '-', s_next, sep = ""))
+  
+  one_season
 }
 
 

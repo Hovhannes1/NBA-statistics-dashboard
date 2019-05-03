@@ -23,8 +23,13 @@ server <- function(input, output, session) {
     get_games_by_season(as.numeric(input$seasonInput5))
   })
   
-  team_years_pergame <- eventReactive(teamCompareBtnInput, {
-    get_team_seasons(get_teamID_from_name(input$teamInput1, team_season1()))
+  team_vs_team <- eventReactive(teamCompareBtnInput, {
+    t1_all <- get_team_seasons(get_teamID_from_name(input$teamInput1, team_season1()))
+    t2_all <- get_team_seasons(get_teamID_from_name(input$teamInput2, team_season1()))
+    t1 <- get_team_single_season(input$seasonInput5, t1_all)
+    t2 <- get_team_single_season(input$seasonInput5, t2_all)
+    
+    rbind(t1, t2)
   })
   
   
