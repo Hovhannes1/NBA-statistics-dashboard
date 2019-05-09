@@ -49,13 +49,16 @@ body <- dashboardBody(
     ## General tab content
     tabItem(tabName = "general",
             fluidPage(
-              fluidRow( 
-                column(6,
+              fluidRow(
+                column(7,
+                       offset = 2,
+                       h3("Team Standings"),
                        plotlyOutput("win_percentage")
                        
                 ),
-                column(6,
-                       title = "Player Performance",
+                column(7,
+                       offset = 2,
+                       h3("Players Performance"),
                        plotlyOutput("player_distribution")
                   
                 )
@@ -112,11 +115,8 @@ body <- dashboardBody(
               ),
               
               fluidRow(
-                box(
-                  width = 12,
-                  div(style = 'overflow-x: scroll', plotlyOutput("teamComparePlot1")))
+                  div(plotlyOutput("teamComparePlot1")))
               )
-            )
     ),
     
     # Player comparison tab content
@@ -168,10 +168,7 @@ body <- dashboardBody(
               ),
               
               fluidRow(
-                box(
-                  width = 12,
-                  div(style = 'overflow-x: scroll', plotlyOutput("playerComparePlot1")))
-              )
+                  div(plotlyOutput("playerComparePlot1")))
             )
     ),
     
@@ -179,25 +176,22 @@ body <- dashboardBody(
     tabItem(tabName = "team_stat",
             fluidPage(
               fluidRow(
-                box(
                   h2("General Team Performance"),
-                  width = 12,
-                  solidHeader = TRUE,
-                  column(3,
+                  column(3, style = "background-color:rgba(255, 255, 255, 0);",
                     selectInput(
                       inputId = "seasonInput2",
                       "Choose a season:",
                       choices = get_seasons(),
                       selected = 2018
                     )),
-                  column(3,
+                  column(3, style = "background-color:rgba(255, 255, 255, 0);",
                          uiOutput("teamOutput3")),
-                  column(1,
+                  column(1, style = "background-color:rgba(255, 255, 255, 0);",
                          uiOutput("teamSeasonBtn"), 
                          style="padding-top: 24px"
                   ),
-                  column(12,div(style = 'overflow-x: scroll', plotlyOutput("general_teamPlot")))
-                )
+                  column(12, style = "background-color:rgba(255, 255, 255, 0);",
+                         div(plotlyOutput("general_teamPlot")))
                
               )
             )
@@ -234,16 +228,16 @@ body <- dashboardBody(
               ),
               
               fluidRow(
-                column(6,
+                column(12,
                        plotOutput("shortChart1")
                 ),
-                column(6,
+                column(12,
                        plotOutput("shortChart2")                      
                 ),
-                column(6,
+                column(12,
                        plotOutput("shortChart3")
                 ),
-                column(6,
+                column(12,
                        plotOutput("shortChart4")                      
                 )
             )

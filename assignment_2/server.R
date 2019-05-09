@@ -147,20 +147,30 @@ server <- function(input, output, session) {
   output$win_percentage <- renderPlotly({
     team_season <- team_season()
     team_win <- as.data.frame(table(team_season$team_abbr))
-    
+      
     team_win$win <- team_season %>%
       group_by(team_abbr) %>%
       filter(win == T) %>%
       select(win) %>%
       summarise(cnt = n())
+
+    tn <- as.data.frame(table(team_season$team_name))  
+    tn$win <- team_season %>%
+      group_by(team_name) %>%
+      filter(win == T) %>%
+      select(win) %>%
+      summarise(cnt = n())
     
-    perc <- (team_win$win$cnt / team_win$Freq) * 100
+    tn$Var1 <- reorder(tn$Var1, (tn$win$cnt / tn$Freq) * 100)
     
+    team_win$perc <- (team_win$win$cnt / team_win$Freq) * 100
+    team_win$Var1 <- reorder(team_win$Var1, team_win$perc)
+    team_win$team_name <- tn$Var1
     
-    p <- ggplot(team_win, aes(x = reorder(Var1, perc), y = perc, 
-                              text = paste('Team: ', Var1,
+    p <- ggplot(team_win, aes(x = Var1, y = perc, 
+                              text = paste('Team: ', team_name,
                                            '<br>Win %:', round(perc, digits = 2)))) +
-      geom_bar(stat = "identity", aes(fill= Var1)) +
+      geom_bar(stat = "identity", aes(fill = Var1)) +
       theme(axis.line = element_blank(),
             axis.text.x = element_blank(),
             axis.ticks = element_blank(),
@@ -168,17 +178,18 @@ server <- function(input, output, session) {
             panel.grid.major = element_blank(),
             panel.grid.minor = element_blank(),
             panel.border = element_blank(),
-            panel.background = element_blank()) +
+            panel.background = element_rect(fill = "transparent"),
+            plot.background = element_rect(fill = "transparent")) +
+      scale_fill_viridis_d(direction = -1) +
       xlab("Teams") +
       ylab("Win Percentage") +
-      scale_colour_brewer() +  
       coord_flip() +
-      ggtitle("Team Performance") +
       geom_text(size = 3, aes(x = Var1, y = perc + 4 , label = round(perc , 1)))
     
-    ggplotly(p, tooltip="text")
+   ggplotly(p, tooltip="text") %>%
+     plotly::config(displaylogo = FALSE, 
+                    modeBarButtonsToRemove = c("lasso2d", "autoScale2d", "hoverCompareCartesian"))
   })
-  
   
   output$player_distribution <- renderPlotly({
     player_avg <- player_season_avg() %>%
@@ -199,14 +210,17 @@ server <- function(input, output, session) {
             panel.grid.major = element_blank(),
             panel.grid.minor = element_blank(),
             panel.border = element_blank(),
-            panel.background = element_blank()) +  
-      ggtitle("Players Performance") + 
+            panel.background = element_rect(fill = "transparent"),
+            plot.background = element_rect(fill = "transparent"),
+            legend.background =  element_rect(fill = "transparent")) +
       xlab("Assists Per Game") +
       ylab("Rebounds Per Game") +
       labs(fill = "FG%")
       
     
-    ggplotly(p, tooltip="text")
+    ggplotly(p, tooltip="text") %>%
+      plotly::config(displaylogo = FALSE, 
+                     modeBarButtonsToRemove = c("lasso2d", "autoScale2d", "hoverCompareCartesian"))
     
   })
   
@@ -276,10 +290,14 @@ server <- function(input, output, session) {
             panel.grid.major = element_blank(),
             panel.grid.minor = element_blank(),
             panel.border = element_blank(),
-            panel.background = element_blank()) + 
+            panel.background = element_rect(fill = "transparent"),
+            plot.background = element_rect(fill = "transparent"),
+            legend.background =  element_rect(fill = "transparent")) + 
       labs(fill = "Teams")
     
-    ggplotly(p, tooltip="text")
+    ggplotly(p, tooltip="text") %>%
+      plotly::config(displaylogo = FALSE, 
+                     modeBarButtonsToRemove = c("lasso2d", "autoScale2d", "hoverCompareCartesian"))
     
   })
   
@@ -354,10 +372,14 @@ server <- function(input, output, session) {
             panel.grid.major = element_blank(),
             panel.grid.minor = element_blank(),
             panel.border = element_blank(),
-            panel.background = element_blank()) +
+            panel.background = element_rect(fill = "transparent"),
+            plot.background = element_rect(fill = "transparent"),
+            legend.background =  element_rect(fill = "transparent")) +
       xlab("Player Stats") + ylab(NULL)
     
-    ggplotly(p, tooltip="text")
+    ggplotly(p, tooltip="text") %>%
+      plotly::config(displaylogo = FALSE, 
+                     modeBarButtonsToRemove = c("lasso2d", "autoScale2d", "hoverCompareCartesian"))
   })
   
   
@@ -392,11 +414,15 @@ server <- function(input, output, session) {
             panel.grid.major = element_blank(),
             panel.grid.minor = element_blank(),
             panel.border = element_blank(),
-            panel.background = element_blank()) +
+            panel.background = element_rect(fill = "transparent"),
+            plot.background = element_rect(fill = "transparent"),
+            legend.background =  element_rect(fill = "transparent")) +
       ylab("Points") +
       xlab("Game date")
     
-    ggplotly(p ,tooltip="text")
+    ggplotly(p ,tooltip="text") %>%
+      plotly::config(displaylogo = FALSE, 
+                     modeBarButtonsToRemove = c("lasso2d", "autoScale2d", "hoverCompareCartesian"))
   })
   
   
@@ -450,7 +476,9 @@ server <- function(input, output, session) {
             axis.text.x = element_blank(),
             axis.text.y = element_blank(),
             legend.title = element_blank(),
-            plot.title = element_text(size = 15, lineheight = 0.9, face = "bold"))
+            plot.title = element_text(size = 15, lineheight = 0.9, face = "bold"),
+            panel.background = element_rect(fill = "transparent"),
+            plot.background = element_rect(fill = "transparent"))
     
     p
   })
@@ -474,7 +502,9 @@ server <- function(input, output, session) {
             axis.text.x = element_blank(),
             axis.text.y = element_blank(),
             legend.title = element_blank(),
-            plot.title = element_text(size = 17, lineheight = 1.2, face = "bold"))
+            plot.title = element_text(size = 17, lineheight = 1.2, face = "bold"),
+            panel.background = element_rect(fill = "transparent"),
+            plot.background = element_rect(fill = "transparent"))
     
     p
   })
@@ -498,7 +528,9 @@ server <- function(input, output, session) {
             axis.text.x = element_blank(),
             axis.text.y = element_blank(),
             legend.title = element_blank(),
-            plot.title = element_text(size = 17, lineheight = 1.2, face = "bold"))
+            plot.title = element_text(size = 17, lineheight = 1.2, face = "bold"),
+            panel.background = element_rect(fill = "transparent"),
+            plot.background = element_rect(fill = "transparent"))
     
       
     p
@@ -533,7 +565,9 @@ server <- function(input, output, session) {
             axis.text.y = element_blank(),
             legend.title = element_blank(),
             legend.text=element_text(size = 12),
-            plot.title = element_text(size = 17, lineheight = 1.2, face = "bold"))
+            plot.title = element_text(size = 17, lineheight = 1.2, face = "bold"),
+            panel.background = element_rect(fill = "transparent"),
+            plot.background = element_rect(fill = "transparent"))
     
     p
   })
