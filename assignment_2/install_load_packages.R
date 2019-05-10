@@ -27,3 +27,9 @@ if (length(packages_to_install) > 0) {
 }
 
 lapply(required_packages, require, character.only = TRUE)
+
+if (!("statsnbaR" %in% installed.packages()[, 1])) {
+  devtools::install_github('stephematician/statsnbaR')
+}
+
+library(statsnbaR)
