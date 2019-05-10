@@ -3,8 +3,7 @@
 ## get the seasons
 ## in nba stat there was only data starting from 1996 that was available in the same format
 get_seasons <- function(start = 1996) {
-  seasons <- start:2018
-  
+  seasons <- start:2018 
 }
 
 ## get team years total/pergame data

@@ -1,4 +1,4 @@
-#NBA Stats Dashboard
+# NBA Stats Dashboard
 
 Please run the "assignment2.R" script.
 It will automatically install all the dependencies and open the dashboard.

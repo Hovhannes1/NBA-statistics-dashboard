@@ -7,14 +7,24 @@
 header <- dashboardHeader(
   title = "NBA Stats",
   dropdownMenu(
-    type = "messages",
+    type = "notifications",
+    icon = icon("link", lib = 'glyphicon'),
+    headerText = "Learn more about data at:",
     notificationItem(
-      a("stats.nba.com", href = "https://stats.nba.com/")
+      text = "stats.nba.com", 
+      href = "https://stats.nba.com/",
+      icon = icon("link", lib = 'glyphicon')
+    ),
+    notificationItem(
+      text = "Stats Glossary", 
+      href = "https://stats.nba.com/help/glossary/",
+      icon = icon("link", lib = 'glyphicon')
     )
   )
 )
 
-sidebar <- dashboardSidebar(sidebarMenu(
+sidebar <- dashboardSidebar(
+  sidebarMenu(
   menuItem(
     "General",
     tabName = "general",
@@ -53,13 +63,12 @@ body <- dashboardBody(
                 column(7,
                        offset = 2,
                        h3("Team Standings"),
-                       plotlyOutput("win_percentage")
-                       
+                       plotlyOutput("win_percentage") %>% withSpinner(color="#0dc5c1")
                 ),
                 column(7,
                        offset = 2,
                        h3("Players Performance"),
-                       plotlyOutput("player_distribution")
+                       plotlyOutput("player_distribution") %>% withSpinner(color="#0dc5c1")
                   
                 )
               )
@@ -115,8 +124,10 @@ body <- dashboardBody(
               ),
               
               fluidRow(
-                  div(plotlyOutput("teamComparePlot1")))
+                  div(plotlyOutput("teamComparePlot1") %>% 
+                        withSpinner(color="#0dc5c1"))
               )
+            )
     ),
     
     # Player comparison tab content
@@ -168,7 +179,9 @@ body <- dashboardBody(
               ),
               
               fluidRow(
-                  div(plotlyOutput("playerComparePlot1")))
+                  div(plotlyOutput("playerComparePlot1") %>% 
+                        withSpinner(color="#0dc5c1"))
+              )
             )
     ),
     
@@ -191,7 +204,9 @@ body <- dashboardBody(
                          style="padding-top: 24px"
                   ),
                   column(12, style = "background-color:rgba(255, 255, 255, 0);",
-                         div(plotlyOutput("general_teamPlot")))
+                         div(plotlyOutput("general_teamPlot") %>% 
+                               withSpinner(color="#0dc5c1"))
+                         )
                
               )
             )
@@ -204,7 +219,7 @@ body <- dashboardBody(
                   h2("Player Shots"),
                   width = 12,
                   solidHeader = TRUE,
-                  column(3,
+                  column(2,
                          selectInput(
                            inputId = "seasonInput4",
                            "Choose a season:",
@@ -212,14 +227,19 @@ body <- dashboardBody(
                            selected = 2018
                          )
                   ),
-                  column(3,
+                  column(2,
                          uiOutput("playerOutput3")
                   ),
-                  column(1,
-                         uiOutput("shotChartBtn"), style="padding-top: 24px"
+                  column(2,
+                         selectInput(
+                           inputId = "chartTypeInput1",
+                           "Choose a plot type:",
+                           choices = c("Shot Types", "Hit and Miss", "Shot Density", "Shot Accuracy"),
+                           selected = "Shot Types"
+                         )
                   ),
                   column(5,
-                         textOutput("playerName"),
+                         htmlOutput("playerName"),
                          htmlOutput("player3Img"),
                          HTML(
                            '<center><div id="playerInfo" class="shiny-html-output"></div></center>'
@@ -229,16 +249,8 @@ body <- dashboardBody(
               
               fluidRow(
                 column(12,
-                       plotOutput("shortChart1")
-                ),
-                column(12,
-                       plotOutput("shortChart2")                      
-                ),
-                column(12,
-                       plotOutput("shortChart3")
-                ),
-                column(12,
-                       plotOutput("shortChart4")                      
+                       plotOutput("shortCharts") %>%
+                        withSpinner(color="#0dc5c1")
                 )
             )
           )
