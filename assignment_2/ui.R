@@ -239,6 +239,7 @@ body <- dashboardBody(
                          )
                   ),
                   column(5,
+                         style = "margin-top: 40px",
                          htmlOutput("playerName"),
                          htmlOutput("player3Img"),
                          HTML(
@@ -248,7 +249,8 @@ body <- dashboardBody(
               ),
               
               fluidRow(
-                column(12,
+                column(7,
+                      style = "margin-top: -264px",
                        plotOutput("shortCharts") %>%
                         withSpinner(color="#0dc5c1")
                 )
