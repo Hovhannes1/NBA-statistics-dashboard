@@ -98,7 +98,7 @@ server <- function(input, output, session) {
   
   ## team analysis data
   
-  one_team_data <- eventReactive(input$teamSeasonBtnInput, {
+  one_team_data <- eventReactive(input$teamInput1, {
     get_team_games_data(team_season(), input$teamInput1)
     
   })
@@ -147,7 +147,7 @@ server <- function(input, output, session) {
     p <- ggplot(shotDataf, aes(x = LOC_X, y = LOC_Y)) + 
       annotation_custom(court_image(), -250, 250, -50, 420) +
       geom_point(aes(colour = SHOT_ZONE_BASIC, shape = EVENT_TYPE)) +
-      scale_shape_manual(values=c(21, 4)) +
+      scale_shape_manual(values = c(21, 4)) +
       xlim(-250, 250) +
       ylim(-50, 420) +
       geom_rug(alpha = 0.2) +
@@ -518,12 +518,6 @@ server <- function(input, output, session) {
                 choices = get_team_list(team_season()))
   })
   
-  
-  output$teamSeasonBtn <- renderUI({
-    HTML(
-      '<center><button id="teamSeasonBtnInput" class="btn btn-default action-button">Show</button></center>'
-    )
-  })
   
   output$general_teamPlot <- renderPlotly({
     one_team_data <- one_team_data()

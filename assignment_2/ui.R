@@ -196,13 +196,13 @@ body <- dashboardBody(
                       "Choose a season:",
                       choices = get_seasons(),
                       selected = 2018
-                    )),
+                      )
+                    ),
+                  
                   column(3, style = "background-color:rgba(255, 255, 255, 0);",
-                         uiOutput("teamOutput3")),
-                  column(1, style = "background-color:rgba(255, 255, 255, 0);",
-                         uiOutput("teamSeasonBtn"), 
-                         style="padding-top: 24px"
-                  ),
+                         uiOutput("teamOutput3")
+                         ),
+                  
                   column(12, style = "background-color:rgba(255, 255, 255, 0);",
                          div(plotlyOutput("general_teamPlot") %>% 
                                withSpinner(color="#0dc5c1"))
@@ -237,22 +237,23 @@ body <- dashboardBody(
                            choices = c("Shot Types", "Hit and Miss", "Shot Density", "Shot Accuracy"),
                            selected = "Shot Types"
                          )
-                  ),
-                  column(5,
-                         style = "margin-top: 40px",
-                         htmlOutput("playerName"),
-                         htmlOutput("player3Img"),
-                         HTML(
-                           '<center><div id="playerInfo" class="shiny-html-output"></div></center>'
-                         )
                   )
               ),
               
               fluidRow(
-                column(7,
-                      style = "margin-top: -264px",
+                column(8,
+                       style = "margin-top: 0",
                        plotOutput("shortCharts") %>%
-                        withSpinner(color="#0dc5c1")
+                         withSpinner(color="#0dc5c1")
+                ),
+                
+                column(4,
+                       style = "margin-top: -10px",
+                       htmlOutput("playerName"),
+                       htmlOutput("player3Img"),
+                       HTML(
+                         '<center><div id="playerInfo" class="shiny-html-output"></div></center>'
+                       )
                 )
             )
           )
